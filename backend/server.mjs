@@ -4,7 +4,6 @@ import bodyParser from 'body-parser';
 import connectToDatabase from './db/conn.mjs'; // import the singleton
 import express from 'express';
 import cors from 'cors';
-import { error } from 'console';
 import chalk from 'chalk';
 
 // create and instance if the express application
