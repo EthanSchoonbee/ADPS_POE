@@ -1,8 +1,6 @@
 import https from 'https';
 import fs from 'fs';
-
 import connectToDatabase from './db/conn.mjs'; // import the singleton
-
 import chalk from 'chalk';
 import app from './app.mjs';
 
@@ -18,7 +16,7 @@ const options = {
 // create HTTPS server and listen on port
 const server = https.createServer(options, app);
 
-// Connect to the database
+// Connect to the database and listen on port
 const startServer = async () => {
   try {
     // get database connection
@@ -37,5 +35,11 @@ const startServer = async () => {
   }
 }
 
-// start the sever
-startServer();
+// start the sever with an IIFE (async/await result handler)
+(async () => {
+  try {
+    await startServer(); // wait for server to start
+  } catch(error) {
+    console.error(chalk.white(chalk.red("Error starting server:"), error.message));
+  }
+})();

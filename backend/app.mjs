@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import userRoutes from './routes/userRoutes.mjs'
+import chalk from 'chalk';
 
 // create and instance if the express application
 const app = express();

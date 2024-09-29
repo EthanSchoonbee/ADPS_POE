@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import express from 'express';
 import connectToDatabase from '../db/conn.mjs';
 import { ObjectId } from "mongodb"; 
 import chalk from "chalk";
