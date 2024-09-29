@@ -1,9 +1,11 @@
-const https = require('https');
-const fs = require('fs');
+import https from 'https';
+import fs from 'fs';
 import bodyParser from 'body-parser';
-import dbInstance from "./conn.js"; // import the singleton
-const express = require('express');
+import connectToDatabase from './db/conn.mjs'; // import the singleton
+import express from 'express';
 import cors from 'cors';
+import { error } from 'console';
+import chalk from 'chalk';
 
 // create and instance if the express application
 const app = express();
@@ -29,7 +31,15 @@ app.use(cors(corsOptions)); // setup cors header (security)
 app.use(bodyParser.json()); // allow JSON request bodies
 
 // Connect to the database
-dbInstance.connect();
+connectToDatabase().then((dbInstance) => {
+  if (dbInstance) {
+      console.log(chalk.green("Database connected successfully."));
+  } else {
+      console.error(chalk.red("Failed to connect to the database."));
+  }
+}).catch((error) => {
+  console.error(chalk.white(chalk.red("Error connecting to the database:"), error));
+});
 
 // routes
 // app.use("/api/users", userRoutes); // mount user routes
@@ -38,5 +48,5 @@ dbInstance.connect();
 
 // create HTTPS server and listen on port
 https.createServer(options, app).listen(PORT, () => {
-  console.log(`HTTPS Server running on port ${PORT}`);
+  console.log(chalk.blue(chalk.yellow(`Server is running on `), `https://localhost:${PORT}`));
 });

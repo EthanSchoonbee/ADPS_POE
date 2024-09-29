@@ -1,14 +1,16 @@
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
+import chalk from 'chalk';
+
 
 // load environment variables from the .env file
 dotenv.config();
 
 // get the connection string from environment variables
-const connnectionString = process.env.MONGO_CONN_STRING || "";
+const connnectionString = process.env.MONGO_CONNECTION_STRING || "";
 
 // log connectionString
-console.log("MongoDB Connection String:", connnectionString);
+console.log(chalk.gray(chalk.yellow("MongoDB Connection String:"), connnectionString));
 
 // setup clioent for connecting to mongodb
 const client =  new MongoClient(connnectionString);
@@ -23,13 +25,13 @@ async function connectToDatabase() {
         try {
             // connect the client to the mongodb server (ATLAS)
             await client.connect()
-            console.log("Successfully connected to MongoDB!");
+            console.log(chalk.green("Successfully connected to MongoDB."));
 
             // select the working database
             dbInstance = client.db(process.env.MONGO_DATABASE || "payment_portal")
     
         } catch (error) { // errors connecting to mongodb
-            console.log("Failed ot connect to MongoDB:", error);
+            console.logchalk.gray((chalk.red("Failed to connect to MongoDB:"), error));
         }
     }
 
