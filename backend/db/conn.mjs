@@ -6,23 +6,23 @@ import chalk from 'chalk';
 dotenv.config();
 
 // get the connection string from environment variables (REMOVE FOR PRODUCTION)
-const connnectionString = process.env.MONGO_CONNECTION_STRING || "";
+const connectionString = process.env.MONGO_CONNECTION_STRING || "";
 
-// validate connectio string and gracefully handle errors
-if (!connnectionString) {
-    console.error(chalk.red("Error: MongoDB conection string is missing"));
+// validate connect string and gracefully handle errors
+if (!connectionString) {
+    console.error(chalk.red("Error: MongoDB connection string is missing"));
     process.exit(1);
 }
 
 // log connectionString
-console.log(chalk.gray(chalk.yellow("MongoDB Connection String:"), connnectionString));
+console.log(chalk.gray(chalk.yellow("MongoDB Connection String:"), connectionString));
 
 // variable for holding database instance
 let dbInstance = null;
 
 async function connectToDatabase() {
     // setup client for connecting to mongodb only if connection string is valid
-    const client =  new MongoClient(connnectionString);
+    const client =  new MongoClient(connectionString);
 
     // check if the instance exists
     if (!dbInstance) {
