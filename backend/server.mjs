@@ -1,13 +1,10 @@
 import https from 'https';
 import fs from 'fs';
-import bodyParser from 'body-parser';
-import connectToDatabase from './db/conn.mjs'; // import the singleton
-import express from 'express';
-import cors from 'cors';
-import chalk from 'chalk';
 
-// create and instance if the express application
-const app = express();
+import connectToDatabase from './db/conn.mjs'; // import the singleton
+
+import chalk from 'chalk';
+import app from './app.mjs';
 
 // get backend port
 const PORT =  process.env.PORT || 3001;
@@ -18,34 +15,27 @@ const options = {
   cert: fs.readFileSync('./keys/server.cert'),
 };
 
-// setup cors options
-const corsOptions = {
-  origin: 'https://localhost:3000',
-  methods: ['GET', 'POST', 'PUT', 'DELETE',],
-  allowedHeaders: ['Content-Type', 'Authorization',]
-};
-
-// middleware:
-app.use(cors(corsOptions)); // setup cors header (security)
-app.use(bodyParser.json()); // allow JSON request bodies
+// create HTTPS server and listen on port
+const server = https.createServer(options, app);
 
 // Connect to the database
-connectToDatabase().then((dbInstance) => {
-  if (dbInstance) {
-      console.log(chalk.green("Database connected successfully."));
-  } else {
-      console.error(chalk.red("Failed to connect to the database."));
+const startServer = async () => {
+  try {
+    // get database connection
+    const dbInstance = await connectToDatabase();
+
+    //check if connection is successful or not
+    if (dbInstance) {
+      console.log(chalk.green("Database connected successfully"));
+
+      server.listen(PORT, () => {
+        console.log(chalk.blue(chalk.yellow(`Server is running on `), `https://localhost:${PORT}`));
+      });
   }
-}).catch((error) => {
-  console.error(chalk.white(chalk.red("Error connecting to the database:"), error));
-});
+  } catch (error) {
+    console.error(chalk.white(chalk.red("Error connecting to the database:"), error));
+  }
+}
 
-// routes
-// app.use("/api/users", userRoutes); // mount user routes
-// app.use("/api/transactions", transactionRoutes); // mount transaction routes
-
-
-// create HTTPS server and listen on port
-https.createServer(options, app).listen(PORT, () => {
-  console.log(chalk.blue(chalk.yellow(`Server is running on `), `https://localhost:${PORT}`));
-});
+// start the sever
+startServer();
