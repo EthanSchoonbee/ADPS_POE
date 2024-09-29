@@ -5,21 +5,21 @@ import chalk from 'chalk';
 import app from './app.mjs';
 
 // get backend port
-const PORT =  process.env.PORT || 3001;
+const PORT =  process.env.PORT || 5001;
 
 // load in SSL certificate and private key for HTTPS
-const options = {
+const sslOptions = {
   key: fs.readFileSync('./keys/server.key'),
   cert: fs.readFileSync('./keys/server.cert'),
 };
 
 // create HTTPS server and listen on port
-const server = https.createServer(options, app);
+const server = https.createServer(sslOptions, app);
 
 // Connect to the database and listen on port
 const startServer = async () => {
   try {
-    // get database connection
+    // establish database connection (get instance)
     const dbInstance = await connectToDatabase();
 
     //check if connection is successful or not

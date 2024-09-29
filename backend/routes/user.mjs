@@ -12,7 +12,7 @@ const asyncHandler = fn => (req, res, next) => {
 
 //test route
 router.get("/", asyncHandler(async (req, res) => {
-    res.send("this is a test route");
+    res.send("this is a test route 1");
 }));
 
 // export router instance

@@ -1,15 +1,15 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import userRoutes from './routes/userRoutes.mjs'
+import authRoutes from './routes/auth.mjs'
 import chalk from 'chalk';
 
-// create and instance if the express application
+// create an instance of the express application
 const app = express();
 
 // setup cors options
 const corsOptions = {
-    origin: 'https://localhost:3000',
+    origin: 'https://localhost:5001',
     methods: ['GET', 'POST', 'PUT', 'DELETE',],
     allowedHeaders: ['Content-Type', 'Authorization',]
   };
@@ -21,8 +21,8 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // ROUTE HANDLERS:
-// 3. User Routes: mount user routes (endpoints)
-app.use("/api/users", userRoutes);
+// 3. Auth Routes: mount auth routes (endpoints)
+app.use("/api/auth", authRoutes);
 // 4. Transaction Routes: mount transaction routes (endpoints)
 //app.use("/api/transactions", transactionRoutes);
 
