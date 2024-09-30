@@ -12,8 +12,11 @@ import user_icon from '../Assets/person.png'
 import password_icon from '../Assets/password.png'
 import pencil_icon from '../Assets/pencil.png'
 import card_icon from '../Assets/card.png'
+import email_icon from '../Assets/email.png'
+
 
 const Register = () => {
+    
     // State to handle visibility for both password fields
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -46,17 +49,22 @@ const Register = () => {
 
                 <div className="registerInput">
                     <img src={user_icon} alt="" />
+                    <input type="username" placeholder="   Username" />
+                </div>
+
+                <div className="registerInput">
+                    <img src={email_icon} alt="" />
+                    <input type="email" placeholder="   Email" />
+                </div>
+
+                <div className="registerInput">
+                    <img src={user_icon} alt="" />
                     <input type="text" placeholder="   ID Number" />
                 </div>
 
                 <div className="registerInput">
                     <img src={card_icon} alt="" />
                     <input type="text" placeholder="   Account Number" />
-                </div>
-
-                <div className="registerInput">
-                    <img src={user_icon} alt="" />
-                    <input type="username" placeholder="   Username" />
                 </div>
 
                 <div className="registerInput">
