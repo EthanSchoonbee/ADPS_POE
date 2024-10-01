@@ -143,4 +143,5 @@ router.post('/login', asyncHandler(async (req, res) => {
     res.status(200).send({ message: "Login successful", token, role: user.role || 'user' });
 }));
 
+//employee login implemented
 export default router;
