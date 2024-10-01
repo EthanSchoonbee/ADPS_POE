@@ -15,4 +15,4 @@ const connectDbMiddleware = async (req, res, next) => {
     next(); // proceed to the next middleware/route handler
 };
 
-export default connectToDatabase;
+export default connectDbMiddleware;
