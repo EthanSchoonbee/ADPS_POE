@@ -7,8 +7,8 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    accountNumber: { type: String, required: true,},
-    idNumber: { type: String, required: true },
+    accountNumber: { type: String, required: true, unique: true },
+    idNumber: { type: String, required: true, unique: true },
     role: { type: String, required: false, default: "user" },
 });
 
