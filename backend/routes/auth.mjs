@@ -1,17 +1,12 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import chalk from "chalk";
 import { z } from 'zod';
-import connectToDatabase from '../db/conn.mjs'; // import the singleton
 import User from "../models/User.mjs";
 import connectDbMiddleware from "../middleware/connectDbMiddleware.mjs";
 
 // create an instance of the express router
 const router = express.Router();
-
-// apply middleware to connect to the database
-router.use(connectDbMiddleware);
 
 // user registration input validation schema
 const signupSchema = z.object({
@@ -113,45 +108,39 @@ router.post('/login', asyncHandler(async (req, res) => {
     // pass valid data to local variables
     const { identifier, password } = validationResult.data;
 
-    try{
-        //get users collection reference
-        let collection = req.db.collection('users');
-        // check in users collection for account presence
-        let user = await collection.findOne({
-            $or: [ { username: identifier },
-                { accountNumber: identifier },],
+    //get users collection reference
+    let collection = req.db.collection('users');
+    // check in users collection for account presence
+    let user = await collection.findOne({
+        $or: [ { username: identifier },
+            { accountNumber: identifier },],
+    });
+
+    // check if the user was found
+    if (!user) {
+        collection = req.db.collection('employees');
+        // if user not found, check in employees collection
+        user = await collection.findOne({
+            username: identifier, // Assuming employees also have a username
         });
-
-        // check if the user was found
-        if (!user) {
-            collection = req.db.collection('employees');
-            // if user not found, check in employees collection
-            user = await collection.findOne({
-                username: identifier, // Assuming employees also have a username
-            });
-        }
-
-        // if no user or employee found
-        if (!user) {
-            return res.status(401).send({ error: "Invalid username or account number" });
-        }
-
-        // compare provided password with stored hashed password
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(401).send({ error: "Invalid password" });
-        }
-
-        // create a token
-        const token = jwt.sign({ id: user._id, role: user.role || 'user' }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1h' });
-
-        // send a response with user role
-        res.status(200).send({ message: "Login successful", token, role: user.role || 'user' });
-    } catch(error) {
-        console.error(chalk.red("Error during login:", error));
-        res.status(500).send({ error: "Internal server error"});
     }
 
+    // if no user or employee found
+    if (!user) {
+        return res.status(401).send({ error: "Invalid username or account number" });
+    }
+
+    // compare provided password with stored hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+        return res.status(401).send({ error: "Invalid password" });
+    }
+
+    // create a token
+    const token = jwt.sign({ id: user._id, role: user.role || 'user' }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1h' });
+
+    // send a response with user role
+    res.status(200).send({ message: "Login successful", token, role: user.role || 'user' });
 }));
 
 export default router;
