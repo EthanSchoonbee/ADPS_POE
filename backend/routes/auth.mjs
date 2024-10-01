@@ -3,26 +3,15 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import chalk from "chalk";
 import { z } from 'zod';
-import connectToDatabase from '../db/conn.mjs';
-import User from "../models/User.mjs"; // import the singleton
+import connectToDatabase from '../db/conn.mjs'; // import the singleton
+import User from "../models/User.mjs";
+import connectDbMiddleware from "../middleware/connectDbMiddleware.mjs";
 
 // create an instance of the express router
 const router = express.Router();
 
-// global variable for the database instance
-let db = null;
-
-// middleware to connect to the database
-const connectDbMiddleware = async (req, res, next) => {
-    if (!db) {
-        db = await connectToDatabase(); // connect to the database
-    }
-    if (!db) {
-        return res.status(500).send({ error: "Failed to connect to the database" });
-    }
-    req.db = db; // attach the database instance to the request object
-    next(); // proceed to the next middleware/route handler
-};
+// apply middleware to connect to the database
+router.use(connectDbMiddleware);
 
 // user registration input validation schema
 const signupSchema = z.object({
@@ -51,7 +40,7 @@ const asyncHandler = fn => (req, res, next) => {
 router.use(connectDbMiddleware);
 
 // ENDPOINTS:
-// 1. Register : user account registration
+// 1. Register : user account registration (no auth required)
 router.post('/signup', asyncHandler(async (req, res) => {
     // validate input data against the signup schema
     const validationResult = signupSchema.safeParse(req.body);
@@ -74,53 +63,46 @@ router.post('/signup', asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "Passwords do not match" });
     }
 
-    try {
-        // get users collections reference
-        const collection = await req.db.collection("users");
+    // get users collections reference
+    const collection =  req.db.collection("users");
 
-        // check if the user already exists by email or username
-        const existingUser = await req.db.collection('users').findOne({
-            $or: [
-                { email: email },
-                { username: username }
-            ]
-        }); // access the users collection
+    // check if the user already exists by email or username
+    const existingUser = await collection.findOne({
+        $or: [{ email: email }, { username }]
+    }); // access the users collection
 
-        if (existingUser) {
-            return res.status(400).send({ error: "User with this email or username already exists" });
-        }
-
-        // salt and hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        // create a new user instance
-        const newUser = new User({
-            firstname,
-            lastname,
-            email,
-            username,
-            password: hashedPassword,
-            accountNumber,
-            idNumber,
-            role: 'user'
-        });
-
-        // save the user to the database
-        await collection.insertOne(newUser);
-
-        // create a token
-        const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1h' });
-
-        // send a response
-        res.status(201).send({ message: "User registered successfully", token });
-    } catch (error) {
-        console.error(chalk.red("Error during signup:", error));
-        res.status(500).send({ error: "Internal server error" });
+    // error out if usr credential exist already
+    if (existingUser) {
+        return res.status(400).send({ error: "User with this email or username already exists" });
     }
+
+    // salt and hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // create a new user instance
+    const newUser = new User({
+        firstname,
+        lastname,
+        email,
+        username,
+        password: hashedPassword,
+        accountNumber,
+        idNumber,
+        role: 'user'
+    });
+
+    // save the user to the database
+    await collection.insertOne(newUser);
+
+    // create a token
+    const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1h' });
+
+    // send a response
+    res.status(201).send({ message: "User registered successfully", token });
 }));
 
-// 2. Login : facilitate user account login
+// 2. Login : facilitate user account login (no auth required)
 router.post('/login', asyncHandler(async (req, res) => {
     // validate input data against the login schema
     const validationResult = loginSchema.safeParse(req.body);
@@ -136,10 +118,8 @@ router.post('/login', asyncHandler(async (req, res) => {
         let collection = req.db.collection('users');
         // check in users collection for account presence
         let user = await collection.findOne({
-            $or: [
-                { username: identifier },
-                { accountNumber: identifier },
-            ],
+            $or: [ { username: identifier },
+                { accountNumber: identifier },],
         });
 
         // check if the user was found
