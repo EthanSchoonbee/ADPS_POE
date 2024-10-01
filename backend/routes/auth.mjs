@@ -34,6 +34,7 @@ const asyncHandler = fn => (req, res, next) => {
 // use the connectDbMiddleware for all routes in this router
 router.use(connectDbMiddleware);
 
+console.log("in route auth");
 // ENDPOINTS:
 // 1. Register : user account registration (no auth required)
 router.post('/signup', asyncHandler(async (req, res) => {
@@ -53,27 +54,38 @@ router.post('/signup', asyncHandler(async (req, res) => {
             accountNumber,
             idNumber } = validationResult.data;
 
+    console.log("input validated and variables captured");
+
     // check if passwords match
     if (password !== confirmPassword) {
         return res.status(400).json({ message: "Passwords do not match" });
     }
 
+    console.log("passwords match");
     // get users collections reference
     const collection =  req.db.collection("users");
+
+    console.log("collection got - users");
 
     // check if the user already exists by email or username
     const existingUser = await collection.findOne({
         $or: [{ email: email }, { username }]
     }); // access the users collection
 
+
+
     // error out if usr credential exist already
     if (existingUser) {
         return res.status(400).send({ error: "User with this email or username already exists" });
     }
 
+    console.log("unique user");
+
     // salt and hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+
+    console.log("hashed password");
 
     // create a new user instance
     const newUser = new User({
@@ -87,11 +99,17 @@ router.post('/signup', asyncHandler(async (req, res) => {
         role: 'user'
     });
 
+    console.log("created user model");
+
     // save the user to the database
     await collection.insertOne(newUser);
 
+    console.log("inserted ");
+
     // create a token
     const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1h' });
+
+    console.log("token made");
 
     // send a response
     res.status(201).send({ message: "User registered successfully", token });
@@ -99,6 +117,7 @@ router.post('/signup', asyncHandler(async (req, res) => {
 
 // 2. Login : facilitate user account login (no auth required)
 router.post('/login', asyncHandler(async (req, res) => {
+    console.log("Received signup request:", req.body);
     // validate input data against the login schema
     const validationResult = loginSchema.safeParse(req.body);
     if (!validationResult.success) {
