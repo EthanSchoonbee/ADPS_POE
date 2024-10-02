@@ -1,5 +1,4 @@
 import Payment from "../models/Payment.mjs";
-import Receiver from "../models/Receiver.mjs";
 import express from 'express';
 import {z} from "zod";
 import connectDbMiddleware from "../middleware/connectDbMiddleware.mjs";
@@ -12,10 +11,6 @@ const paymentSchema = z.object({
     amount: z.string().min(1, { message: "amount is required" }),
     currency: z.string().min(1, { message: "currency is required" }),
     provider: z.string().min(1, { message: "provider is required" }),
-});
-
-// initial receiver input validation schema
-const receiverSchema = z.object({
     swiftCode: z.string().min(1, { message: "swiftCode is required" }),
     recipientAccountNo: z.string().min(1, { message: "recipientAccountNo is required" }),
     recipientBank: z.string().min(1, { message: "recipientBank is required" }),
@@ -42,16 +37,27 @@ router.post('/payment', asyncHandler(async (req, res) => {
     // pass valid data to local variables
     const { amount,
         currency,
-        provider } = validationResult.data;
+        provider,
+        swiftCode,
+        recipientAccountNo,
+        recipientBank,
+        recipientName,
+        userId } = validationResult.data;
 
+    //logging the payment object
     console.log("input validated and variables captured");
 
-    // create a new payment instance
-    const newPayment = new Payment({
+    const newPayment = Payment({
         amount,
         currency,
-        provider
-    });
+        provider,
+        swiftCode,
+        recipientAccountNo,
+        recipientBank,
+        recipientName,
+        userId
+    })
+
 
     console.log("created payment model");
 
@@ -62,43 +68,6 @@ router.post('/payment', asyncHandler(async (req, res) => {
 
     // send a response
     res.status(201).send({ message: "Payment registered successfully"});
-}));
-
-
-// ENDPOINTS:
-// 2. Receiver : inputing receiver details (no auth required)
-router.post('/receiver', asyncHandler(async (req, res) => {
-    // validate input data against the payment schema
-    const validationResult = receiverSchema.safeParse(req.body);
-    if (!validationResult.success) {
-        return res.status(400).send(validationResult.error.errors);
-    }
-
-    // pass valid data to local variables
-    const { swiftCode,
-            recipientAccountNo,
-            recipientBank,
-            recipientName} = validationResult.data;
-
-    console.log("input validated and variables captured");
-
-    // create a new payment instance
-    const newReceiver = new Receiver({
-        swiftCode,
-        recipientAccountNo,
-        recipientBank,
-        recipientName
-    });
-
-    console.log("created receiver model");
-
-    // save the receiver to the database
-    //await collection.insertOne(newReceiver);
-
-    //console.log("inserted ");
-
-    // send a response
-    res.status(201).send({ message: "Receiver registered successfully"});
 }));
 
 //user payment implemented
