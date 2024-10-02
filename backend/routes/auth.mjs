@@ -4,25 +4,36 @@ import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import User from "../models/User.mjs";
 import connectDbMiddleware from "../middleware/connectDbMiddleware.mjs";
-import chalk from "chalk";
 
 // create an instance of the express router
 const router = express.Router();
+
+// regular expression for South African ID validation
+const idNumberRegex = /^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[0-2])(0[0-9]|[0-9][0-9])([0-4][0-9]{3}|[5-9][0-9]{3})([01])8[0-9]$/;
+
+// regular expression for bank account number validation
+const accountNumberPattern = /^\d{7,10}$/;
+
+// regular expression for password validation on signup
+const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
 // user registration input validation schema
 const signupSchema = z.object({
     firstname: z.string().min(1, { message: "Firstname is required" }),
     lastname: z.string().min(1, { message: "Lastname is required" }),
-    email: z.string().min(1,{ message: "Invalid email address" }),
+    email: z.string().email({ message: "Invalid email address" }), // First in order
     username: z.string().min(1, { message: "Username is required" }),
-    password: z.string().min(1, { message: "Password is required" }),
+    idNumber: z.string() // Move idNumber before accountNumber
+        .min(1, { message: "ID number is required" })
+        .refine((id) => idNumberRegex.test(id), { message: "Invalid ID number format" }),
+    accountNumber: z.string()
+        .min(1, { message: "Account number is required" })
+        .refine((accountNumber) => accountNumberPattern.test(accountNumber), { message: "Invalid Account number. It should be between 7 to 10 digits." }),
+    password: z.string()
+        .min(1, { message: "Password is required" })
+        .refine((password) => passwordRegex.test(password), { message: "Password must be at least 8 characters long, contain at least one uppercase letter, one digit, and one special character." }),
     confirmPassword: z.string(),
-    accountNumber: z.string().min(1, { message: "Account number is required" }),
-    idNumber: z.string().min(1, { message: "ID number is required" }),
 });
-
-// regular expression for password validation on signup
-const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
 
 // user and employee login input validation schema
 const loginSchema = z.object({
@@ -45,11 +56,34 @@ router.post('/signup', asyncHandler(async (req, res) => {
 
     // validate input data against the signup schema
     const validationResult = signupSchema.safeParse(req.body);
+
+    // Initialize counters and arrays for handling errors
+    let missingFields = [];
+    let formatErrors = [];
+
     if (!validationResult.success) {
-        return res.status(400).json({
-            error: "Please fill out all fields and ensure you email address is valid",
-            details: validationResult.error.errors,
-        });
+        const errorMessages = validationResult.error.errors;
+
+        // categories errors
+        errorMessages.forEach(error => {
+            if (error.message.includes("is required")) {
+                missingFields.push(error.message);
+            } else {
+                formatErrors.push(error.message);
+            }
+        })
+
+        if (missingFields.length > 0) {
+            return res.status(400).json({
+                error: "Fill in all inputs"
+            });
+        }
+
+        if (formatErrors.length > 0) {
+            return res.status(400).json({
+                error: formatErrors[0]
+            });
+        }
     }
 
     // pass valid data to local variables
@@ -71,29 +105,44 @@ router.post('/signup', asyncHandler(async (req, res) => {
         });
     }
 
-    // check password against regex pattern
-    if (!passwordRegex.test(password)) {
-        return res.status(400).json({
-            error: "Password must be at least 8 characters long, contain at least one uppercase letter, one digit, and one special character."
-        })
-    }
-
     console.log("passwords match");
     // get users collections reference
     const collection =  req.db.collection("users");
 
     console.log("collection got - users");
 
-    // check if the user already exists by email or username
+    // Check if the user already exists by email, username, ID number, or account number
     const existingUser = await collection.findOne({
-        $or: [{ email: email }, { username }]
-    }); // access the users collection
+        $or: [{ email }, { username }, { idNumber }, { accountNumber }]
+    });
 
     // error out if usr credential exist already
     if (existingUser) {
-        return res.status(400).json({
-            error: "User with this email or username already exists"
-        });
+        const errorFields = [];
+
+        // Check for each specific field
+        if (existingUser.username === username) {
+            errorFields.push("this username");
+        }
+        if (existingUser.email === email) {
+            errorFields.push("this email");
+        }
+        if (existingUser.idNumber === idNumber) {
+            errorFields.push("this ID number");
+        }
+        if (existingUser.accountNumber === accountNumber) {
+            errorFields.push("this account number");
+        }
+
+        // Only proceed to create the error message if there are fields to report
+        if (errorFields.length > 0) {
+            // Construct the error message based on the collected fields
+            let errorMessage = "A user with " + errorFields.join(", ").replace(/, ([^,]*)$/, ' and $1') + " already exists.";
+
+            return res.status(400).json({
+                error: errorMessage
+            });
+        }
     }
 
     console.log("unique user");
