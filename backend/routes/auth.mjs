@@ -13,15 +13,18 @@ const router = express.Router();
 const signupSchema = z.object({
     firstname: z.string().min(1, { message: "Firstname is required" }),
     lastname: z.string().min(1, { message: "Lastname is required" }),
-    email: z.string().email({ message: "Invalid email address" }),
+    email: z.string().min(1,{ message: "Invalid email address" }),
     username: z.string().min(1, { message: "Username is required" }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
+    password: z.string().min(1, { message: "Password is required" }),
     confirmPassword: z.string(),
     accountNumber: z.string().min(1, { message: "Account number is required" }),
     idNumber: z.string().min(1, { message: "ID number is required" }),
 });
 
-// user/employee login input validation schema
+// regular expression for password validation on signup
+const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+
+// user and employee login input validation schema
 const loginSchema = z.object({
     identifier: z.string().min(1, { message: "Username or account number is required" }),
     password: z.string().min(1, { message: "Password is required" }),
@@ -39,10 +42,14 @@ console.log("in route auth");
 // ENDPOINTS:
 // 1. Register : user account registration (no auth required)
 router.post('/signup', asyncHandler(async (req, res) => {
+
     // validate input data against the signup schema
     const validationResult = signupSchema.safeParse(req.body);
     if (!validationResult.success) {
-        return res.status(400).send(validationResult.error.errors);
+        return res.status(400).json({
+            error: "Please fill out all fields and ensure you email address is valid",
+            details: validationResult.error.errors,
+        });
     }
 
     // pass valid data to local variables
@@ -59,7 +66,16 @@ router.post('/signup', asyncHandler(async (req, res) => {
 
     // check if passwords match
     if (password !== confirmPassword) {
-        return res.status(400).json({ message: "Passwords do not match" });
+        return res.status(400).json({
+            error: "Passwords do not match"
+        });
+    }
+
+    // check password against regex pattern
+    if (!passwordRegex.test(password)) {
+        return res.status(400).json({
+            error: "Password must be at least 8 characters long, contain at least one uppercase letter, one digit, and one special character."
+        })
     }
 
     console.log("passwords match");
@@ -73,11 +89,11 @@ router.post('/signup', asyncHandler(async (req, res) => {
         $or: [{ email: email }, { username }]
     }); // access the users collection
 
-
-
     // error out if usr credential exist already
     if (existingUser) {
-        return res.status(400).send({ error: "User with this email or username already exists" });
+        return res.status(400).json({
+            error: "User with this email or username already exists"
+        });
     }
 
     console.log("unique user");
@@ -113,7 +129,10 @@ router.post('/signup', asyncHandler(async (req, res) => {
     console.log("token made");
 
     // send a response
-    res.status(201).send({ message: "User registered successfully", token });
+    res.status(201).json({
+        message: "User registered successfully",
+        token
+    });
 }));
 
 // 2. Login : facilitate user account login (no auth required)
@@ -123,11 +142,10 @@ router.post('/login', asyncHandler(async (req, res) => {
     // validate input data against the login schema
     const validationResult = loginSchema.safeParse(req.body);
     if (!validationResult.success) {
-        return res.status(400).send({
+        return res.status(400).json({
             error: "Please fill out all fields",
             details: validationResult.error.errors,
         });
-
     }
 
     // pass valid data to local variables
@@ -151,7 +169,7 @@ router.post('/login', asyncHandler(async (req, res) => {
 
     // if no user or employee found
     if (!user) {
-        return res.status(401).send({
+        return res.status(401).json({
             error: "Invalid username or account number"
         });
     }
@@ -159,7 +177,7 @@ router.post('/login', asyncHandler(async (req, res) => {
     // compare provided password with stored hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-        return res.status(401).send({
+        return res.status(401).json({
             error: "Invalid password"
         });
     }
@@ -169,7 +187,7 @@ router.post('/login', asyncHandler(async (req, res) => {
 
 
     // send a response with user role
-    res.status(200).send({
+    res.status(200).json({
         message: "Login successful",
         token,
         role: user.role || 'user'
@@ -178,5 +196,4 @@ router.post('/login', asyncHandler(async (req, res) => {
     console.log("LOGIN SUCCESSFUL");
 }));
 
-//employee login implemented
 export default router;

@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import app from './app.mjs';
 
 // get backend port
-const PORT =  process.env.PORT || 3001;
+const PORT =  process.env.PORT || 5001;
 
 // load in SSL certificate and private key for HTTPS
 const sslOptions = {

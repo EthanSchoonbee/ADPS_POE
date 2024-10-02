@@ -37,7 +37,7 @@ const Login = () => {
             if (token) {
                 localStorage.setItem('token', token);
                 setMessage({ text: "Successfully logged in!", type: "success" });
-                //navigate('/'); // Redirect to homepage or desired route
+                navigate('/Payment'); // Redirect to homepage or desired route
             } else {
                 setMessage({ text: 'Login failed: Invalid credentials!', type: "error" });
             }
