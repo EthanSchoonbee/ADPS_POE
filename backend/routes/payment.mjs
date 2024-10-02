@@ -8,13 +8,15 @@ const router = express.Router();
 
 // initial payment input validation schema
 const paymentSchema = z.object({
-    amount: z.string().min(1, { message: "amount is required" }),
+    amount: z.number().min(1, { message: "amount is required" }),
     currency: z.string().min(1, { message: "currency is required" }),
     provider: z.string().min(1, { message: "provider is required" }),
     swiftCode: z.string().min(1, { message: "swiftCode is required" }),
-    recipientAccountNo: z.string().min(1, { message: "recipientAccountNo is required" }),
+    recipientAccountNo: z.number().min(1, { message: "recipientAccountNo is required" }),
     recipientBank: z.string().min(1, { message: "recipientBank is required" }),
     recipientName: z.string().min(1, { message: "recipientName is required" }),
+    userId: z.string().min(1, { message: "userId is required" }),
+    isValidated: z.boolean({ message: "isValidated is required" }),
 });
 
 // middleware for async error handling (catch errors and pass to errorHandler)
@@ -42,11 +44,18 @@ router.post('/payment', asyncHandler(async (req, res) => {
         recipientAccountNo,
         recipientBank,
         recipientName,
-        userId } = validationResult.data;
+        userId,
+        isValidated} = validationResult.data;
 
     //logging the payment object
     console.log("input validated and variables captured");
 
+    // get users collections reference
+    const collection =  req.db.collection("transactions");
+
+    console.log("collection got - transactions");
+
+    // create a new payment instance
     const newPayment = Payment({
         amount,
         currency,
@@ -55,16 +64,16 @@ router.post('/payment', asyncHandler(async (req, res) => {
         recipientAccountNo,
         recipientBank,
         recipientName,
-        userId
+        userId,
+        isValidated
     })
-
 
     console.log("created payment model");
 
     // save the payment to the database
-    //await collection.insertOne(newPayment);
+    await collection.insertOne(newPayment);
 
-    //console.log("inserted ");
+    console.log("inserted ");
 
     // send a response
     res.status(201).send({ message: "Payment registered successfully"});
