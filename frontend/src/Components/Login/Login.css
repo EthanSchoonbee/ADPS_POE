@@ -24,6 +24,7 @@
     display: flex;
     flex-direction: column;
     width: 600px;
+    height: 580px;
     margin: auto;
     margin-top: 70px;
     background: #fff;
@@ -84,6 +85,19 @@ input img {
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
+}
+
+.error-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #c52424;
+}
+
+.success-message {
+    display: flex;
+    justify-content: center;
+    color: #4fc23e;
 }
 
 

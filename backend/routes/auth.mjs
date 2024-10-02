@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import User from "../models/User.mjs";
 import connectDbMiddleware from "../middleware/connectDbMiddleware.mjs";
+import chalk from "chalk";
 
 // create an instance of the express router
 const router = express.Router();
@@ -23,7 +24,7 @@ const signupSchema = z.object({
 // user/employee login input validation schema
 const loginSchema = z.object({
     identifier: z.string().min(1, { message: "Username or account number is required" }),
-    password: z.string().min(6, { message: "Password is required" }),
+    password: z.string().min(1, { message: "Password is required" }),
 });
 
 // middleware for async error handling (catch errors and pass to errorHandler)
@@ -117,11 +118,16 @@ router.post('/signup', asyncHandler(async (req, res) => {
 
 // 2. Login : facilitate user account login (no auth required)
 router.post('/login', asyncHandler(async (req, res) => {
-    console.log("Received signup request:", req.body);
+    console.log("Received login request:", req.body);
+
     // validate input data against the login schema
     const validationResult = loginSchema.safeParse(req.body);
     if (!validationResult.success) {
-        return res.status(400).send(validationResult.error.errors);
+        return res.status(400).send({
+            error: "Please fill out all fields",
+            details: validationResult.error.errors,
+        });
+
     }
 
     // pass valid data to local variables
@@ -131,8 +137,7 @@ router.post('/login', asyncHandler(async (req, res) => {
     let collection = req.db.collection('users');
     // check in users collection for account presence
     let user = await collection.findOne({
-        $or: [ { username: identifier },
-            { accountNumber: identifier },],
+        $or: [ { username: identifier }, { accountNumber: identifier }],
     });
 
     // check if the user was found
@@ -146,20 +151,31 @@ router.post('/login', asyncHandler(async (req, res) => {
 
     // if no user or employee found
     if (!user) {
-        return res.status(401).send({ error: "Invalid username or account number" });
+        return res.status(401).send({
+            error: "Invalid username or account number"
+        });
     }
 
     // compare provided password with stored hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-        return res.status(401).send({ error: "Invalid password" });
+        return res.status(401).send({
+            error: "Invalid password"
+        });
     }
 
     // create a token
     const token = jwt.sign({ id: user._id, role: user.role || 'user' }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1h' });
 
+
     // send a response with user role
-    res.status(200).send({ message: "Login successful", token, role: user.role || 'user' });
+    res.status(200).send({
+        message: "Login successful",
+        token,
+        role: user.role || 'user'
+    });
+
+    console.log("LOGIN SUCCESSFUL");
 }));
 
 //employee login implemented
