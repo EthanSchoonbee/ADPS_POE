@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Payment.css';
 
-//importing icons
+// Importing icons
 import user_icon from '../Assets/person.png';
 import card_icon from '../Assets/card.png';
 import bank_icon from '../Assets/bank.png';
@@ -9,11 +9,13 @@ import money_icon from '../Assets/money.png';
 import currency_icon from '../Assets/currency.png';
 
 const Payment = () => {
-    // State to manage selected bank and SWIFT code
+    // State to manage selected bank, SWIFT code, currency symbol, and payment amount
     const [selectedBank, setSelectedBank] = useState('');
     const [swiftCode, setSwiftCode] = useState('');
+    const [currencySymbol, setCurrencySymbol] = useState(''); 
+    const [paymentAmount, setPaymentAmount] = useState('');   
 
-    // Object mapping banks to SWIFT codes
+    // Assigning swift codes to banks
     const bankSwiftCodes = {
         "Standard Bank": "SBZAZAJJ",
         "ABSA": "ABSAZAJJ",
@@ -22,11 +24,41 @@ const Payment = () => {
         "Nedbank": "NEDSZAJJ"
     };
 
+    // Assigning symbols to currencies
+    const currencySymbols = {
+        "ZAR": "R",
+        "USD": "$",
+        "GBP": "£"
+    };
+
     // Handle bank selection and update SWIFT code
     const handleBankChange = (event) => {
         const bank = event.target.value;
         setSelectedBank(bank);
-        setSwiftCode(bankSwiftCodes[bank] || '');  // Set SWIFT code or empty if bank not found
+        setSwiftCode(bankSwiftCodes[bank] || '');  
+    };
+
+    // Handle currency selection and update currency symbol
+    const handleCurrencyChange = (event) => {
+        const currency = event.target.value;
+        setCurrencySymbol(currencySymbols[currency] || '');  
+        setPaymentAmount(''); 
+    };
+
+    // Format the number with spaces for thousands, millions
+    const formatNumber = (value) => {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' '); 
+    };
+
+    // Handle payment amount input and ensure symbol stays in front
+    const handlePaymentAmountChange = (event) => {
+        let value = event.target.value.replace(currencySymbol, '').replace(/[^\d.]/g, '');  
+        if (!isNaN(value) && value !== '') {
+            value = formatNumber(value); 
+            setPaymentAmount(`${currencySymbol} ${value}`);  
+        } else {
+            setPaymentAmount(`${currencySymbol} `);  
+        }
     };
 
     return (
@@ -38,31 +70,37 @@ const Payment = () => {
 
             <div className="paymentInputs">
 
-                {/*Payment Amount*/}
-                <div className="paymentLabel">
-                    <p>Payment Amount: </p>
-                </div>
-                <div className="paymentInput">
-                    <img src={money_icon} alt="" />
-                    <input type="text" placeholder="  Payment Amount:" />
-                </div>
-
-                {/*Transaction currency*/}
+                {/* Transaction currency */}
                 <div className="paymentLabel">
                     <p>Transaction Currency: </p>
                 </div>
                 <div className="paymentInput">
                     <img src={currency_icon} alt="" />
-                    <select className="paymentDropbox">
+                    <select className="paymentDropbox" onChange={handleCurrencyChange}>
                         <option value="ZAR">ZAR</option>
                         <option value="USD">USD</option>
                         <option value="GBP">GBP</option>
                     </select>
                 </div>
 
-                {/*Provider*/}
+                {/* Payment Amount */}
                 <div className="paymentLabel">
-                    <p>Provider: </p>
+                    <p>Payment Amount: </p>
+                </div>
+                <div className="paymentInput">
+                    <img src={money_icon} alt="" />
+                    <input 
+                        type="text" 
+                        value={paymentAmount}  
+                        onChange={handlePaymentAmountChange}  
+                        placeholder="Payment Amount:"
+                    />
+                </div>
+
+
+                {/* Recipient bank */}
+                <div className="paymentLabel">
+                    <p>Recipient Bank: </p>
                 </div>
                 <div className="paymentInput">
                     <img src={bank_icon} alt="" />
@@ -75,16 +113,16 @@ const Payment = () => {
                     </select>
                 </div>
 
-                {/*SWIFT Code*/}
+                {/* SWIFT Code */}
                 <div className="paymentLabel">
-                    <p>SWIFT code: </p>
+                    <p>Provider (SWIFT code): </p>
                 </div>
                 <div className="paymentInput">
                     <img src={bank_icon} alt="" />
                     <input type="text" value={swiftCode} placeholder="SWIFT Code" readOnly />
                 </div>
 
-                {/*Recipient name*/}
+                {/* Recipient name */}
                 <div className="paymentLabel">
                     <p>Recipient Name: </p>
                 </div>
@@ -93,28 +131,18 @@ const Payment = () => {
                     <input type="text" placeholder="  Recipient Name:" />
                 </div>
 
-                {/*Recipient bank*/}
-                <div className="paymentLabel">
-                    <p>Recipient Bank: </p>
-                </div>
-                <div className="paymentInput">
-                    <img src={bank_icon} alt="" />
-                    <input type="password" placeholder="Recipient Bank" />
-                </div>
-            
-
-                {/*Recipient account number*/}
+                {/* Recipient account number */}
                 <div className="paymentLabel">
                     <p>Recipient's account no: </p>
                 </div>
                 <div className="paymentInput">
                     <img src={card_icon} alt="" />
-                    <input type="password" placeholder="Recipient's Account No" />
+                    <input type="text" placeholder="Recipient's Account No" />
                 </div>
 
-                </div>
+            </div>
 
-            {/*Buttons*/}
+            {/* Buttons */}
             <div className="paymentSubmit-container">
                 <div className="paymentSubmit">Pay Now</div>
                 <div className="paymentSubmit">Cancel</div>
@@ -124,3 +152,7 @@ const Payment = () => {
 };
 
 export default Payment;
+
+
+
+
