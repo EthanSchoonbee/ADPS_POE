@@ -12,8 +12,10 @@ const Payment = () => {
     // State to manage selected bank, SWIFT code, currency symbol, and payment amount
     const [selectedBank, setSelectedBank] = useState('');
     const [swiftCode, setSwiftCode] = useState('');
-    const [currencySymbol, setCurrencySymbol] = useState(''); 
-    const [paymentAmount, setPaymentAmount] = useState('');   
+    const [currencySymbol, setCurrencySymbol] = useState('');
+    const [paymentAmount, setPaymentAmount] = useState('');
+    const [recipientName, setRecipientName] = useState('');
+    const [accountNumber, setAccountNumber] = useState('');
 
     // Assigning swift codes to banks
     const bankSwiftCodes = {
@@ -35,29 +37,29 @@ const Payment = () => {
     const handleBankChange = (event) => {
         const bank = event.target.value;
         setSelectedBank(bank);
-        setSwiftCode(bankSwiftCodes[bank] || '');  
+        setSwiftCode(bankSwiftCodes[bank] || '');
     };
 
     // Handle currency selection and update currency symbol
     const handleCurrencyChange = (event) => {
         const currency = event.target.value;
-        setCurrencySymbol(currencySymbols[currency] || '');  
-        setPaymentAmount(''); 
+        setCurrencySymbol(currencySymbols[currency] || '');
+        setPaymentAmount('');
     };
 
     // Format the number with spaces for thousands, millions
     const formatNumber = (value) => {
-        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' '); 
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     };
 
     // Handle payment amount input and ensure symbol stays in front
     const handlePaymentAmountChange = (event) => {
-        let value = event.target.value.replace(currencySymbol, '').replace(/[^\d.]/g, '');  
+        let value = event.target.value.replace(currencySymbol, '').replace(/[^\d.]/g, '');
         if (!isNaN(value) && value !== '') {
-            value = formatNumber(value); 
-            setPaymentAmount(`${currencySymbol} ${value}`);  
+            value = formatNumber(value);
+            setPaymentAmount(`${currencySymbol} ${value}`);
         } else {
-            setPaymentAmount(`${currencySymbol} `);  
+            setPaymentAmount(`${currencySymbol} `);
         }
     };
 
@@ -89,10 +91,10 @@ const Payment = () => {
                 </div>
                 <div className="paymentInput">
                     <img src={money_icon} alt="" />
-                    <input 
-                        type="text" 
-                        value={paymentAmount}  
-                        onChange={handlePaymentAmountChange}  
+                    <input
+                        type="text"
+                        value={paymentAmount}
+                        onChange={handlePaymentAmountChange}
                         placeholder="Payment Amount:"
                     />
                 </div>
@@ -119,7 +121,11 @@ const Payment = () => {
                 </div>
                 <div className="paymentInput">
                     <img src={bank_icon} alt="" />
-                    <input type="text" value={swiftCode} placeholder="SWIFT Code" readOnly />
+                    <input
+                        type="text"
+                        value={swiftCode}
+                        placeholder="SWIFT Code" readOnly
+                    />
                 </div>
 
                 {/* Recipient name */}
@@ -128,7 +134,12 @@ const Payment = () => {
                 </div>
                 <div className="paymentInput">
                     <img src={user_icon} alt="" />
-                    <input type="text" placeholder="  Recipient Name:" />
+                    <input
+                        type="text"
+                        value={recipientName}
+                        onChange={(e) => setRecipientName(e.target.value)} 
+                        placeholder="  Recipient Name:"
+                    />
                 </div>
 
                 {/* Recipient account number */}
@@ -137,7 +148,12 @@ const Payment = () => {
                 </div>
                 <div className="paymentInput">
                     <img src={card_icon} alt="" />
-                    <input type="text" placeholder="Recipient's Account No" />
+                    <input
+                        type="text"
+                        value={accountNumber}
+                        onChange={(e) => setAccountNumber(e.target.value)}
+                        placeholder="Recipient's Account No"
+                    />
                 </div>
 
             </div>
