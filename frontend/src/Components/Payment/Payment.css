@@ -8,9 +8,10 @@
 }
 
 .paymentLabel {
-    margin-top: 10px;
+    margin-top: 5px;
     margin-left: 70px;
     font-weight: bold;
+    font-size: 16px;
 }
 
 .paymentText {
@@ -45,6 +46,16 @@
     justify-items: left;
 }
 
+.paymentDropbox{
+    margin-left: 20px;
+    width: 200px; 
+    height: 30px;
+    font-size: 15px;
+    border: none;
+    background-color: #EAEAEA;
+
+}
+
 .paymentInput {
     padding-left: 10px;
     display: flex;
@@ -61,8 +72,7 @@
     background: transparent;
     border: none;
     outline: none;
-    color: #797979;
-    font-size: 14px;
+    font-size: 15px;
     padding-left: 15px;
 }
 
