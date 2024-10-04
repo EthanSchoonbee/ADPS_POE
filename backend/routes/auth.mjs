@@ -4,9 +4,19 @@ import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import User from "../models/User.mjs";
 import connectDbMiddleware from "../middleware/connectDbMiddleware.mjs";
+import ExpressBrute from 'express-brute';
 
 // create an instance of the express router
 const router = express.Router();
+
+const store = new ExpressBrute.MemoryStore();
+const bruteforce = new ExpressBrute(store, {
+    // Define the rate limit: here it's set to 5 requests per minute
+    freeRetries: 5,
+    minWait: 5000, // 5 seconds
+    maxWait: 60000, // 1 minute
+    lifetime: 60 * 60, // 1 hour
+});
 
 // regular expression for South African ID validation
 const idNumberRegex = /^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[0-2])(0[0-9]|[0-9][0-9])([0-4][0-9]{3}|[5-9][0-9]{3})([01])8[0-9]$/;
@@ -49,10 +59,12 @@ const asyncHandler = fn => (req, res, next) => {
 // use the connectDbMiddleware for all routes in this router
 router.use(connectDbMiddleware);
 
-console.log("in route auth");
+console.log("Loaded Route : auth");
 // ENDPOINTS:
 // 1. Register : user account registration (no auth required)
 router.post('/signup', asyncHandler(async (req, res) => {
+
+    console.log("Received signup request:", req.body);
 
     // validate input data against the signup schema
     const validationResult = signupSchema.safeParse(req.body);
@@ -96,8 +108,6 @@ router.post('/signup', asyncHandler(async (req, res) => {
             accountNumber,
             idNumber } = validationResult.data;
 
-    console.log("input validated and variables captured");
-
     // check if passwords match
     if (password !== confirmPassword) {
         return res.status(400).json({
@@ -105,11 +115,8 @@ router.post('/signup', asyncHandler(async (req, res) => {
         });
     }
 
-    console.log("passwords match");
     // get users collections reference
     const collection =  req.db.collection("users");
-
-    console.log("collection got - users");
 
     // Check if the user already exists by email, username, ID number, or account number
     const existingUser = await collection.findOne({
@@ -145,13 +152,9 @@ router.post('/signup', asyncHandler(async (req, res) => {
         }
     }
 
-    console.log("unique user");
-
     // salt and hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
-    console.log("hashed password");
 
     // create a new user instance
     const newUser = new User({
@@ -165,27 +168,24 @@ router.post('/signup', asyncHandler(async (req, res) => {
         role: 'user'
     });
 
-    console.log("created user model");
-
     // save the user to the database
     await collection.insertOne(newUser);
 
-    console.log("inserted ");
-
     // create a token
     const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1h' });
-
-    console.log("token made");
 
     // send a response
     res.status(201).json({
         message: "User registered successfully",
         token
     });
+
+    console.log("SIGNUP SUCCESSFUL");
 }));
 
 // 2. Login : facilitate user account login (no auth required)
 router.post('/login', asyncHandler(async (req, res) => {
+
     console.log("Received login request:", req.body);
 
     // validate input data against the login schema
@@ -202,6 +202,7 @@ router.post('/login', asyncHandler(async (req, res) => {
 
     //get users collection reference
     let collection = req.db.collection('users');
+
     // check in users collection for account presence
     let user = await collection.findOne({
         $or: [ { username: identifier }, { accountNumber: identifier }],
@@ -234,12 +235,10 @@ router.post('/login', asyncHandler(async (req, res) => {
     // create a token
     const token = jwt.sign({ id: user._id, role: user.role || 'user' }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1h' });
 
-
     // send a response with user role
     res.status(200).json({
         message: "Login successful",
-        token,
-        role: user.role || 'user'
+        token
     });
 
     console.log("LOGIN SUCCESSFUL");

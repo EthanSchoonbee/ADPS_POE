@@ -40,7 +40,7 @@ const asyncHandler = fn => (req, res, next) => {
 // use the connectDbMiddleware for all routes in this router
 router.use(connectDbMiddleware);
 
-console.log("in route payment");
+console.log("Loaded Route : transaction");
 // ENDPOINTS:
 // 1. Payment : inputing payment details (no auth required)
 router.post('/payment', asyncHandler(async (req, res) => {

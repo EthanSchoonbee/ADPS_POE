@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
-
+import {jwtDecode} from "jwt-decode";
 //Importing css file
 import './Login.css'
-
 //Importing icons
 import user_icon from '../Assets/person.png'
 import password_icon from '../Assets/password.png'
@@ -25,6 +24,7 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         setMessage(null);
+        console.log("button clicked");
 
         try {
             const response = await axios.post('https://localhost:3001/api/auth/login', {
@@ -32,22 +32,40 @@ const Login = () => {
                 password: password
             });
 
+            console.log("got response");
             //Extracting the token and the role of the user
-            const { token,role }= response.data;
+            const { token }= response.data;
+
+            console.log("extracted token");
+            console.log(token);
 
             if (token) {
                 localStorage.setItem('token', token);
+
+                console.log("stored token");
+
+                // decode jwt and get user role for page navigation
+                const decodedToken = jwtDecode(token);
+                console.log(`decoded token: ${decodedToken}`);
+
+                const { id, role } = decodedToken;
+                console.log(`extracted user role : ${role}`);
+                console.log(`extracted user id : ${id}`);
+
                 setMessage({ text: "Successfully logged in!", type: "success" });
 
-                //will redirect the user based on their specific role
+                // redirect the user based on their specific role
                 if(role === "employee"){
-                    //if employee will navigate the the employee dashboard
+                    console.log("navigating to employee dashboard");
+                    // navigate the employee dashboard
                     navigate('/EmployeeDash');
                 }else{
-                    //redirect to the customer dashboard
+                    console.log("navigating to payment portal");
+                    // navigate to the customer dashboard
                     navigate('/Payment');
                 }
             } else {
+                // failed to fetch valid token
                 setMessage({ text: 'Login failed: Invalid credentials!', type: "error" });
             }
 
