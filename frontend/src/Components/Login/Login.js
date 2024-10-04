@@ -45,7 +45,7 @@ const Login = () => {
                     navigate('/EmployeeDash');
                 }else{
                     //redirect to the customer dashboard
-                    navigate('/CustomerDash');
+                    navigate('/Payment');
                 }
             } else {
                 setMessage({ text: 'Login failed: Invalid credentials!', type: "error" });

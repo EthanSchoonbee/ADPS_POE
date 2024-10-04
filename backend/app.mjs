@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import authRoutes from './routes/auth.mjs'
-import paymentRoutes from './routes/payment.mjs'
+import paymentRoutes from './routes/transaction.mjs'
 import chalk from 'chalk';
 
 // create an instance of the express application
@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 // 3. Auth Routes: mount auth routes (endpoints)
 app.use("/api/auth", authRoutes);
 // 4. Transaction Routes: mount transaction routes (endpoints)
-app.use("/api/payment", paymentRoutes);
+app.use("/api/transaction", paymentRoutes);
 //app.use("/api/transactions", transactionRoutes);
 
 // ERROR HANDLING MIDDLEWARE:

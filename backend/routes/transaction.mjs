@@ -30,7 +30,6 @@ const paymentSchema = z.object({
         .string()
         .regex(accountNumberRegex, { message: "Invalid account number" }),
     recipientName: z.string().min(1, { message: "recipientName is required" }),
-    userId: z.string().min(1, { message: "userId is required" }),
 });
 
 // middleware for async error handling (catch errors and pass to errorHandler)
@@ -40,6 +39,7 @@ const asyncHandler = fn => (req, res, next) => {
 
 // use the connectDbMiddleware for all routes in this router
 router.use(connectDbMiddleware);
+
 console.log("in route payment");
 // ENDPOINTS:
 // 1. Payment : inputing payment details (no auth required)
@@ -57,7 +57,6 @@ router.post('/payment', asyncHandler(async (req, res) => {
         bank,
         recipientAccountNo,
         recipientName,
-        userId,
     } = validationResult.data;
 
     //logging the payment object
@@ -79,7 +78,7 @@ router.post('/payment', asyncHandler(async (req, res) => {
         recipientAccountNo,
         recipientBank: bank,
         recipientName,
-        userId,
+        userId: "66fc505b7431a7ee1fc2d159",
         isValidated: false
     })
 
