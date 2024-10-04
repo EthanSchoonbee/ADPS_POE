@@ -28,33 +28,33 @@ const Payment = () => {
         "FNB": "FIRNZAJJ",
         "Capitec": "CABLZAJJ",
         "Nedbank": "NEDSZAJJ"
-    };
+    }
 
     // Assigning symbols to currencies
     const currencySymbols = {
         "ZAR": "R",
         "USD": "$",
         "GBP": "£"
-    };
+    }
 
     // Handle bank selection and update SWIFT code
     const handleBankChange = (event) => {
         const bank = event.target.value;
         setSelectedBank(bank);
         setSwiftCode(bankSwiftCodes[bank] || '');
-    };
+    }
 
     // Handle currency selection and update currency symbol
     const handleCurrencyChange = (event) => {
         const currency = event.target.value;
         setCurrencySymbol(currencySymbols[currency] || '');
         setPaymentAmount('');
-    };
+    }
 
     // Format the number with spaces for thousands, millions
     const formatNumber = (value) => {
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    };
+    }
 
     // Handle payment amount input and ensure symbol stays in front
     const handlePaymentAmountChange = (event) => {
@@ -65,8 +65,7 @@ const Payment = () => {
         } else {
             setPaymentAmount(`${currencySymbol} `);
         }
-    };
-
+    }
 
 
 
@@ -75,30 +74,29 @@ const Payment = () => {
         e.preventDefault();
         setMessage(null);
 
+        setMessage("making payment");
+
+        const formattedAmount = paymentAmount.replace(/[^0-9.]/g, ''); // Removes any non-numeric characters
+        const selectedCurrency = currencySymbol; // Ensure this is one of the allowed values (ZAR, USD, GBP)
+
+        const payload = {
+            amount: formattedAmount, // Ensure this is a string in the format expected by your schema
+            currency: selectedCurrency, // This should be one of the allowed values
+            bank: selectedBank, // This should also match one of the specified banks
+            recipientAccountNo: accountNumber, // Should match the regex for a valid account number
+            recipientName: recipientName // Ensure this is a non-empty string
+        }
+
+        console.log("Payload being sent:", payload);
+
         try {
-            const response = await axios.post('https://localhost:3001/api/transaction/payment', {
-                currency: currencySymbol,
-                amount: paymentAmount,
-                bank: selectedBank,
-                recipientAccountNo: accountNumber,
-                recipientName: recipientName
-            });
-
-
-            if (token) {
-                setMessage({ text: "Successful payment!", type: "success" });
-                navigate('/CustomerDash'); // Redirect to homepage or desired route
-            } else {
-                setMessage({ text: 'Payment failed: Invalid entries!', type: "error" });
-            }
-
+            const response = await axios.post('https://localhost:3001/api/transaction/payment', payload);
+            setMessage({ text: response.data.message, type: "success" });
         } catch(err) {
             const errorMessage = err.response?.data?.error || "An unexpected error occurred. Please try again.";
             setMessage({ text: errorMessage, type: "error" });
         }
     }
-
-
 
 
 
@@ -194,10 +192,9 @@ const Payment = () => {
                         placeholder="Recipient's Account No"
                     />
                 </div>
-
             </div>
-
             {/* Buttons */}
+
             <div className="paymentSubmit-container">
                 <div className="paymentSubmit" onClick={handlePayment}>Pay Now</div>
                 <div className="paymentSubmit">Cancel</div>
@@ -208,6 +205,7 @@ const Payment = () => {
                     {message.text}
                 </p>
             )}
+
         </div>
     );
 };

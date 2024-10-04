@@ -96,3 +96,19 @@
     font-weight: 700;
     cursor: pointer;
 }
+
+.error-message, .success-message {
+    display: flex;
+    justify-content: center; /* centers horizontally */
+    align-items: center;     /* centers vertically */
+    height: 100%;            /* make sure the container has height to allow vertical centering */
+    text-align: center;      /* ensures text is centered */
+}
+
+.error-message {
+    color: #c52424; /* error color */
+}
+
+.success-message {
+    color: #4fc23e; /* success color */
+}
