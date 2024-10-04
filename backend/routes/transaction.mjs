@@ -2,6 +2,7 @@ import Payment from "../models/Payment.mjs";
 import express from 'express';
 import {z} from "zod";
 import connectDbMiddleware from "../middleware/connectDbMiddleware.mjs";
+import { auth } from "../middleware/authMiddleware.mjs";  // Import the auth middleware
 
 // create an instance of the express router
 const router = express.Router();
@@ -10,7 +11,7 @@ const router = express.Router();
 //this amount regex is used to validate that the amount is a number with a maximum of 2 decimal places
 const amountRegex = /^(\d+(\.\d{1,2})?)$/;
 //dummy account number regex. Validating the number is between 10 and 16 digits
-const accountNumberRegex = /^\d{10,16}$/;
+const accountNumberRegex = /^\d{7,11}$/;
 
 //swift codes for the different banks
 const swiftCodes ={
@@ -24,7 +25,7 @@ const swiftCodes ={
 //updated payment schema with regex validation
 const paymentSchema = z.object({
     amount: z.string().regex(amountRegex, { message: "Invalid amount format" }),
-    currency: z.enum(["ZAR", "USD", "GBP"], { message: "Invalid currency" }),
+    currency: z.enum(["R", "$", "£"], { message: "Invalid currency" }),
     bank: z.enum(Object.keys(swiftCodes), { message: "Invalid bank" }),
     recipientAccountNo: z
         .string()
@@ -32,7 +33,7 @@ const paymentSchema = z.object({
     recipientName: z.string().min(1, { message: "recipientName is required" }),
 });
 
-// middleware for async error handling (catch errors and pass to errorHandler)
+//middleware for async error handling (catch errors and pass to errorHandler)
 const asyncHandler = fn => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
 };
@@ -40,27 +41,33 @@ const asyncHandler = fn => (req, res, next) => {
 // use the connectDbMiddleware for all routes in this router
 router.use(connectDbMiddleware);
 
-console.log("Loaded Route : transaction");
+console.log("In route to payment");
 // ENDPOINTS:
 // 1. Payment : inputing payment details (no auth required)
-router.post('/payment', asyncHandler(async (req, res) => {
+router.post('/payment',auth, asyncHandler(async (req, res) => {
 
-    console.log("starting payment")
-    /* validate input data against the payment schema
+    //message saying the payment has started
+    console.log("starting payment");
+    //getting the values that are passed from the frontend
+    console.log("Received data:", req.body);
+
+    // validate the input data
     const validationResult = paymentSchema.safeParse(req.body);
     if (!validationResult.success) {
+        console.log("Validation failed:", validationResult.error.errors);
         return res.status(400).json(validationResult.error.errors);
-    }*/
+    }
 
+    //message validation is passed
     console.log("validation passed")
 
     // pass valid data to local variables
-   const {
+    const {
         amount,
         currency,
         bank,
         recipientAccountNo,
-        recipientName,
+        recipientName
     } = validationResult.data;
 
     //logging the payment object
@@ -69,8 +76,10 @@ router.post('/payment', asyncHandler(async (req, res) => {
     // get users collections reference
     const collection =  req.db.collection("transactions");
 
+    //logging that the collection has been gotten
     console.log("collection got - transactions");
 
+    //get the swift code for the bank
     const swiftCode = swiftCodes[bank];
 
     // create a new payment instance
@@ -81,9 +90,9 @@ router.post('/payment', asyncHandler(async (req, res) => {
         swiftCode,
         recipientAccountNo,
         recipientBank: bank,
-        recipientName,
-        userId: "66fc505b7431a7ee1fc2d159",
-        isValidated: false
+        recipientName,//the name of the recipient
+        userId: req.user.id,//the user id of the current authenticated user logged in
+        isValidated: false// the payment is not validated yet
     })
 
     console.log("created payment model");
