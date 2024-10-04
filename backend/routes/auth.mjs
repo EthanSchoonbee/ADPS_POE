@@ -9,13 +9,15 @@ import ExpressBrute from 'express-brute';
 // create an instance of the express router
 const router = express.Router();
 
+// EXPRESS BRUTE bruteforce prevention (input rate limiting)
 const store = new ExpressBrute.MemoryStore();
+// free 5 retries then a lockout for 1 hour. During the lockout you get 1 retry before a timer is set.
 const bruteforce = new ExpressBrute(store, {
     // Define the rate limit: here it's set to 5 requests per minute
-    freeRetries: 5,
-    minWait: 5000, // 5 seconds
-    maxWait: 60000, // 1 minute
-    lifetime: 60 * 60, // 1 hour
+    freeRetries: 5, // allowed tries before lockout
+    minWait: 5000, // 5 seconds min wait time
+    maxWait: 60000, // 1 minute max wait time
+    lifetime: 60 * 60, // 1 hour lockout lifetime
 });
 
 // regular expression for South African ID validation
@@ -184,7 +186,9 @@ router.post('/signup', asyncHandler(async (req, res) => {
 }));
 
 // 2. Login : facilitate user account login (no auth required)
-router.post('/login', asyncHandler(async (req, res) => {
+router.post('/login',
+    bruteforce.prevent,
+    asyncHandler(async (req, res) => {
 
     console.log("Received login request:", req.body);
 
