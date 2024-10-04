@@ -44,7 +44,7 @@ router.use(connectDbMiddleware);
 console.log("In route to payment");
 // ENDPOINTS:
 // 1. Payment : inputing payment details (no auth required)
-router.post('/payment',auth, asyncHandler(async (req, res) => {
+router.post('/payment', asyncHandler(async (req, res) => {
 
     //message saying the payment has started
     console.log("starting payment");
