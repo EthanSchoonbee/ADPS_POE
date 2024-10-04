@@ -54,7 +54,7 @@ router.post('/payment', asyncHandler(async (req, res) => {
     const {
         amount,
         currency,
-        recipientBank,
+        bank,
         recipientAccountNo,
         recipientName,
         userId,
@@ -68,7 +68,7 @@ router.post('/payment', asyncHandler(async (req, res) => {
 
     console.log("collection got - transactions");
 
-    const swiftCode = swiftCodes[recipientBank];
+    const swiftCode = swiftCodes[bank];
 
     // create a new payment instance
     const newPayment = Payment({
@@ -77,7 +77,7 @@ router.post('/payment', asyncHandler(async (req, res) => {
         provider: "SWIFT",
         swiftCode,
         recipientAccountNo,
-        recipientBank: recipientBank,
+        recipientBank: bank,
         recipientName,
         userId,
         isValidated: false
