@@ -44,14 +44,18 @@ console.log("in route payment");
 // ENDPOINTS:
 // 1. Payment : inputing payment details (no auth required)
 router.post('/payment', asyncHandler(async (req, res) => {
-    // validate input data against the payment schema
+
+    console.log("starting payment")
+    /* validate input data against the payment schema
     const validationResult = paymentSchema.safeParse(req.body);
     if (!validationResult.success) {
-        return res.status(400).send(validationResult.error.errors);
-    }
+        return res.status(400).json(validationResult.error.errors);
+    }*/
+
+    console.log("validation passed")
 
     // pass valid data to local variables
-    const {
+   const {
         amount,
         currency,
         bank,
