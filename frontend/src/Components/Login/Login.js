@@ -32,12 +32,21 @@ const Login = () => {
                 password: password
             });
 
-            const { token }= response.data;
+            //Extracting the token and the role of the user
+            const { token,role }= response.data;
 
             if (token) {
                 localStorage.setItem('token', token);
                 setMessage({ text: "Successfully logged in!", type: "success" });
-                navigate('/Payment'); // Redirect to homepage or desired route
+
+                //will redirect the user based on their specific role
+                if(role === "employee"){
+                    //if employee will navigate the the employee dashboard
+                    navigate('/EmployeeDash');
+                }else{
+                    //redirect to the customer dashboard
+                    navigate('/CustomerDash');
+                }
             } else {
                 setMessage({ text: 'Login failed: Invalid credentials!', type: "error" });
             }

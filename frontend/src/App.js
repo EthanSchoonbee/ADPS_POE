@@ -8,6 +8,8 @@ import './App.css';
 import Login from './Components/Login/Login';
 import Register from './Components/Register/Register';
 import Payment from './Components/Payment/Payment';
+import CustomerDash from "./Components/CustomerDashboard/CustomerDash";
+import EmployeeDash from "./Components/EmployeeDash/EmployeeDash";
 
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
         <Route path="/" element={ <Login />} />
         <Route path="/Register" element={ <Register />} />
         <Route path="/Payment" element={ <Payment />} />
+        <Route path="/CustomerDash" element={ <CustomerDash />} />
+        <Route path={"/EmployeeDash"} element={ <EmployeeDash />} />
       </Routes>
       </div>
     </main>
