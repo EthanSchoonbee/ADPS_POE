@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import {jwtDecode} from "jwt-decode";
@@ -15,16 +15,46 @@ const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message,setMessage] = useState(null);
+    const [canLogin, setCanLogin] = useState(true)
+    const [retryAfter, setRetryAfter] = useState(null);
     const navigate = useNavigate();
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     }
 
+    // bruteforce timer prevention
+    useEffect(() => {
+        // if there is a retry timer start a countdown
+        if (retryAfter) {
+            const timer = setInterval(() => {
+                const now = new Date().getTime();
+                const timeLeft = retryAfter - now;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    setCanLogin(true);
+                    setMessage(null);
+                    setRetryAfter(null);
+                }
+            }, 1000);
+
+            return () => clearInterval(timer);
+        }
+    }, [retryAfter]);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setMessage(null);
         console.log("button clicked");
+
+        // check if the user cannot log in
+        if (!canLogin) {
+            const now = new Date().getTime();
+            const timeLeft = Math.ceil((retryAfter - now) / 1000);
+            setMessage({ text: `Please wait before trying to log in again. ${timeLeft} seconds.`, type: "error" });
+            return;
+        }
 
         try {
             const response = await axios.post('https://localhost:3001/api/auth/login', {
@@ -32,23 +62,19 @@ const Login = () => {
                 password: password
             });
 
-            console.log("got response");
             //Extracting the token and the role of the user
             const { token }= response.data;
 
-            console.log("extracted token");
             console.log(token);
 
             if (token) {
                 localStorage.setItem('token', token);
 
-                console.log("stored token");
-
                 // decode jwt and get user role for page navigation
                 const decodedToken = jwtDecode(token);
-                console.log(`decoded token: ${decodedToken}`);
 
                 const { id, role } = decodedToken;
+
                 console.log(`extracted user role : ${role}`);
                 console.log(`extracted user id : ${id}`);
 
@@ -56,11 +82,9 @@ const Login = () => {
 
                 // redirect the user based on their specific role
                 if(role === "employee"){
-                    console.log("navigating to employee dashboard");
                     // navigate the employee dashboard
                     navigate('/EmployeeDash');
                 }else{
-                    console.log("navigating to payment portal");
                     // navigate to the customer dashboard
                     navigate('/Payment');
                 }
@@ -70,8 +94,24 @@ const Login = () => {
             }
 
         } catch(err) {
-            const errorMessage = err.response?.data?.error || "An unexpected error occurred. Please try again.";
-            setMessage({ text: errorMessage, type: "error" });
+            // Check if the error response indicates that the rate limit has been exceeded
+            if (err.response && err.response.status === 429) {
+                // handle specific error response when rate limit is exceeded
+                const { error } = err.response.data;
+
+                // get the next valid login attempt time
+                const nextValidRequestDate = new Date(error.nextValidRequestDate).getTime();
+                setCanLogin(false); // prevent further login attempts
+                setRetryAfter(nextValidRequestDate); // time until next retry
+                const timeUntilRetry = (nextValidRequestDate - new Date().getTime()) / 1000; // time in seconds
+
+                // display lockout message
+                setMessage({ text: `Too many login attempts. Please try again after ${Math.ceil(timeUntilRetry)} seconds.`, type: "error" });
+            } else {
+                // Fallback for unexpected errors
+                const errorMessage = err.response?.data?.error || "An unexpected error occurred. Please try again.";
+                setMessage({ text: errorMessage, type: "error" });
+            }
         }
     }
 
