@@ -76,20 +76,18 @@ const Payment = () => {
         setMessage(null);
 
         try {
-            const response = await axios.post('https://localhost:3001/api/payment/payment', {
+            const response = await axios.post('https://localhost:3001/api/transaction/payment', {
                 currency: currencySymbol,
                 amount: paymentAmount,
-                recipientBank: selectedBank,
+                bank: selectedBank,
                 recipientAccountNo: accountNumber,
                 recipientName: recipientName
             });
 
-            const { token }= response.data;
 
             if (token) {
-                localStorage.setItem('token', token);
                 setMessage({ text: "Successful payment!", type: "success" });
-                navigate('/Payment'); // Redirect to homepage or desired route
+                navigate('/CustomerDash'); // Redirect to homepage or desired route
             } else {
                 setMessage({ text: 'Payment failed: Invalid entries!', type: "error" });
             }
@@ -201,9 +199,15 @@ const Payment = () => {
 
             {/* Buttons */}
             <div className="paymentSubmit-container">
-                <div className="paymentSubmit" onClick={handlePayment} >Pay Now</div>
+                <div className="paymentSubmit" onClick={handlePayment}>Pay Now</div>
                 <div className="paymentSubmit">Cancel</div>
             </div>
+
+            {message && (
+                <p className={message.type === "success" ? "success-message" : "error-message"}>
+                    {message.text}
+                </p>
+            )}
         </div>
     );
 };
