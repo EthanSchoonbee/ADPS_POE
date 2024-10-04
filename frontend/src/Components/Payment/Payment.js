@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Payment.css';
+import {Link, useNavigate} from 'react-router-dom';
 
 // Importing icons
 import user_icon from '../Assets/person.png';
@@ -7,6 +8,7 @@ import card_icon from '../Assets/card.png';
 import bank_icon from '../Assets/bank.png';
 import money_icon from '../Assets/money.png';
 import currency_icon from '../Assets/currency.png';
+import axios from "axios";
 
 const Payment = () => {
     // State to manage selected bank, SWIFT code, currency symbol, and payment amount
@@ -16,6 +18,8 @@ const Payment = () => {
     const [paymentAmount, setPaymentAmount] = useState('');
     const [recipientName, setRecipientName] = useState('');
     const [accountNumber, setAccountNumber] = useState('');
+    const [message,setMessage] = useState(null);
+    const navigate = useNavigate();
 
     // Assigning swift codes to banks
     const bankSwiftCodes = {
@@ -62,6 +66,43 @@ const Payment = () => {
             setPaymentAmount(`${currencySymbol} `);
         }
     };
+
+
+
+
+    //handling front and back connection
+    const handlePayment = async (e) => {
+        e.preventDefault();
+        setMessage(null);
+
+        try {
+            const response = await axios.post('https://localhost:3001/api/payment/payment', {
+                currency: currencySymbol,
+                amount: paymentAmount,
+                recipientBank: selectedBank,
+                recipientAccountNo: accountNumber,
+                recipientName: recipientName
+            });
+
+            const { token }= response.data;
+
+            if (token) {
+                localStorage.setItem('token', token);
+                setMessage({ text: "Successful payment!", type: "success" });
+                navigate('/Payment'); // Redirect to homepage or desired route
+            } else {
+                setMessage({ text: 'Payment failed: Invalid entries!', type: "error" });
+            }
+
+        } catch(err) {
+            const errorMessage = err.response?.data?.error || "An unexpected error occurred. Please try again.";
+            setMessage({ text: errorMessage, type: "error" });
+        }
+    }
+
+
+
+
 
     return (
         <div className='paymentContainer'>
@@ -160,7 +201,7 @@ const Payment = () => {
 
             {/* Buttons */}
             <div className="paymentSubmit-container">
-                <div className="paymentSubmit">Pay Now</div>
+                <div className="paymentSubmit" onClick={handlePayment} >Pay Now</div>
                 <div className="paymentSubmit">Cancel</div>
             </div>
         </div>
