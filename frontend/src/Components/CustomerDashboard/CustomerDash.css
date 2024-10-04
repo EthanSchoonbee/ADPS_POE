@@ -1,0 +1,96 @@
+.dashboard-container {
+    display: flex;
+    padding: 20px;
+    background-color: #f9f9f9;
+    height: 100vh; /* Full height of the viewport */
+}
+
+.menu-container {
+    flex: 1;
+    max-width: 200px; /* Defines the width of the left-side menu */
+    margin-right: 20px; /* Space between the menu and main content */
+}
+
+.menu-button {
+    background-color: #f0f0f0;
+    padding: 15px;
+    border-radius: 8px;
+    color: #333;
+    font-weight: 700;
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+    border: none;
+}
+
+.menu-button:hover {
+    background-color: #ddd; /* Lighter color on hover */
+}
+
+.menu-button.active {
+    background-color: #3C009D; /* Active (selected) item color */
+    color: #fff; /* White text for active item */
+}
+
+.main-content {
+    flex: 3; /* Takes more space than the menu */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the content horizontally */
+    width: 100%;
+}
+
+.header-text {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.welcome-text {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.banking-details, .payment-receipts {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.banking-header {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.toggle-button {
+    color: #3C009D;
+    font-weight: 600;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.receipt {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.pay-again-button {
+    background-color: #4C00B4;
+    color: #fff;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 700;
+}
