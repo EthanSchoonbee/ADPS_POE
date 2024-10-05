@@ -1,0 +1,245 @@
+.dashboardContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+    margin-top: 70px;
+    background: #fff;
+    margin-bottom: 50px;
+    align-items: center; /* Center everything horizontally */
+}
+
+.dashboardHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.dashboardText {
+    color: #3c009d;
+    font-size: 42px;
+    font-weight: 700;
+}
+
+.dashboardUnderline {
+    width: 61px;
+    height: 6px;
+    background: #3C009D;
+    border-radius: 9px;
+}
+
+.dashboardContent {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center; /* Horizontally center the content */
+    gap: 40px;
+    width: 100%;
+}
+
+.mainSection {
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: flex-start; /* Align items at the top */
+    gap: 40px;
+    width: 100%;
+    max-width: 900px;
+}
+
+.leftSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align content to the left */
+    gap: 20px;
+}
+
+.rightSection {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center all content horizontally */
+    gap: 15px;
+    width: 100%;
+    max-width: 500px; /* Limit the width of the right section */
+}
+
+.customerName {
+    text-align: left;
+    width: 100%;
+}
+
+.customerName h2 {
+    color: #3c009d;
+    font-size: 24px;
+    margin: 0;
+}
+
+.verticalMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start; /* Align items to the left */
+}
+
+.menuItem {
+    padding: 12px 20px;
+    background: #eaeaea;
+    text-align: left;
+    border-radius: 6px;
+    color: #3c009d;
+    font-weight: 600;
+    cursor: pointer;
+    width: 200px;
+}
+
+.menuItem:hover {
+    background-color: #ddd;
+}
+
+.logoutItem {
+    margin-top: 20px;
+}
+
+.logoutBtn {
+    padding: 12px 20px;
+    background: #c52424;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 200px;
+}
+
+.logoutBtn:hover {
+    background: #a41f1f;
+}
+
+.paymentButtons {
+    display: flex;
+    gap: 20px;
+    justify-content: center; /* Center the buttons horizontally */
+}
+
+.paymentBtn {
+    padding: 14px 30px;
+    background: #4c00b4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 200px;
+}
+
+.paymentBtn:hover {
+    background: #3c009d;
+}
+
+/* Center the banking details section */
+.bankingDetails {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+    background: #eaeaea;
+    width: 100%;
+    text-align: center;
+    font-weight: 600;
+}
+
+.bankIcon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+/* Adjust account details section to center properly */
+.accountDetails {
+    padding: 15px;
+    background: #eaeaea;
+    width: 100%;
+    max-width: 500px; /* Set a maximum width */
+    text-align: left;
+    font-weight: 600;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between elements */
+}
+
+.accountDetails div {
+    margin-bottom: 10px;
+}
+
+.accountDetails span {
+    font-weight: 700;
+    color: #3c009d;
+}
+
+.paymentReceipts {
+    padding: 15px;
+    background: #eaeaea;
+    width: 100%;
+    text-align: center;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.cardIcon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.paymentHistoryContainer {
+    width: 100%;
+    background: #f9f9f9;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.paymentReceipt {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #eaeaea;
+    margin-bottom: 10px;
+    border-radius: 6px;
+}
+
+.paymentInfo {
+    display: flex;
+    gap: 20px;
+}
+
+.paymentDate,
+.paymentReference,
+.paymentTotal {
+    font-weight: 600;
+}
+
+.payAgainBtn {
+    background: #4c00b4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.payAgainBtn:hover {
+    background: #3c009d;
+}
