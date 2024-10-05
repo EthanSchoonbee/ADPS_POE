@@ -82,9 +82,6 @@ const Dashboard = () => {
                             <div>
                                 <span>Acc No:</span> {user.accountNumber}
                             </div>
-                            <div>
-                                <span>Available Balance:</span> R{user.balance}
-                            </div>
                         </div>
 
                         <div className="paymentReceipts">
@@ -99,7 +96,7 @@ const Dashboard = () => {
                                     <div className="paymentInfo">
                                         <span className="paymentDate">{payment.date}</span>
                                         <span className="paymentReference">{payment.reference}</span>
-                                        <span className="paymentTotal">R{payment.total}</span>
+                                        <span className="paymentTotal">{payment.total}</span>
                                     </div>
                                     <button className="payAgainBtn" onClick={() => handlePayAgain(payment)}>
                                         Pay Again
