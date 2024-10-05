@@ -10,6 +10,7 @@ import Register from './Components/Register/Register';
 import Payment from './Components/Payment/Payment';
 import CustomerDash from "./Components/CustomerDashboard/CustomerDash";
 import EmployeeDash from "./Components/EmployeeDash/EmployeeDash";
+import Dashboard from "./Components/Dashboard/Dashboard";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/Payment" element={ <Payment />} />
         <Route path="/CustomerDash" element={ <CustomerDash />} />
         <Route path={"/EmployeeDash"} element={ <EmployeeDash />} />
+        <Route path={"/Dashboard"} element={< Dashboard />} />s
       </Routes>
       </div>
     </main>

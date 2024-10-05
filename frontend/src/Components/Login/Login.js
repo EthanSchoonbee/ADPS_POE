@@ -86,7 +86,7 @@ const Login = () => {
                     navigate('/EmployeeDash');
                 }else{
                     // navigate to the customer dashboard
-                    navigate('/Payment');
+                    navigate('/Dashboard');
                 }
             } else {
                 // failed to fetch valid token
