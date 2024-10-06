@@ -245,7 +245,51 @@ router.post('/login',
         token
     });
 
-    console.log("LOGIN SUCCESSFUL");
-}));
+        console.log("LOGIN SUCCESSFUL");
+    })
+);
+
+//Route that is getting the current user information
+router.get(
+    "/user",
+    auth,
+    asyncHandler(async (req, res) => {
+        //fetching the user informatoin from the database for the user id in the request body
+        console.log("Fetching user information for user ID:", req.user.id);
+
+        //try catch block for handling any errors that may occur
+        try {
+            //fetchin the user information from the database for the user id in the request body
+            const userCollection = req.db.collection("users");
+            //finding the user in the database and excluding the password field
+            const user = await userCollection.findOne(
+                { _id: new mongoose.Types.ObjectId(req.user.id) },
+                { projection: { password: 0 } }
+            );
+
+            //if the user is not empty then send the user information
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+
+            //sending the user information to the frontend
+            res.status(200).json({
+                user: {
+                    id: user._id,//the user id
+                    firstname: user.firstname,//the user firstname
+                    lastname: user.lastname,//the user lastname
+                    email: user.email,//the user email
+                    username: user.username,//the user username
+                    accountNumber: user.accountNumber,//the user account number
+                    role: user.role,//the user role
+                },
+            });
+        } catch (error) {
+            //if the user is not found then send an error message
+            console.error("Error fetching user information:", error, chalk.red("Failed to fetch user information"));
+            res.status(500).json({ error: "Internal server error" });//Will send an error message to the frontend
+        }
+    })
+);
 
 export default router;

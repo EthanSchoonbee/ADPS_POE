@@ -1,8 +1,10 @@
-import Payment from "../models/Payment.mjs";
-import express from 'express';
-import {z} from "zod";
+import express from "express";
+import { z } from "zod";
 import connectDbMiddleware from "../middleware/connectDbMiddleware.mjs";
-import { auth } from "../middleware/authMiddleware.mjs";  // Import the auth middleware
+import Payment from "../models/Payment.mjs"; //importing the payment model
+import { auth } from "../middleware/authMiddleware.mjs"; // Import the auth middleware
+import mongoose from "mongoose";
+import chalk from "chalk";
 
 // create an instance of the express router
 const router = express.Router();
@@ -14,13 +16,13 @@ const amountRegex = /^(\d+(\.\d{1,2})?)$/;
 const accountNumberRegex = /^\d{7,11}$/;
 
 //swift codes for the different banks
-const swiftCodes ={
+const swiftCodes = {
     FNB: "FIRNZAJJ",
     ABSA: "ABSAZAJJ",
     NEDBANK: "NEDSZAJJ",
     CAPITEC: "CABLZAJJ",
-    STANDARD_BANK: "SBZAZAJJ"
-}
+    STANDARD_BANK: "SBZAZAJJ",
+};
 
 //updated payment schema with regex validation
 const paymentSchema = z.object({
@@ -34,7 +36,7 @@ const paymentSchema = z.object({
 });
 
 //middleware for async error handling (catch errors and pass to errorHandler)
-const asyncHandler = fn => (req, res, next) => {
+const asyncHandler = (fn) => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
 };
 
@@ -44,67 +46,97 @@ router.use(connectDbMiddleware);
 console.log("In route to payment");
 // ENDPOINTS:
 // 1. Payment : inputing payment details (no auth required)
-router.post('/payment', asyncHandler(async (req, res) => {
+router.post(
+    "/payment",
+    auth, // Add auth middleware here
+    asyncHandler(async (req, res) => {
+        //message saying the payment has started
+        console.log("starting payment");
+        //getting the values that are passed from the frontend
+        console.log("Received data:", req.body);
+        console.log("User:", req.user); // Log the user
 
-    //message saying the payment has started
-    console.log("starting payment");
-    //getting the values that are passed from the frontend
-    console.log("Received data:", req.body);
+        // validate the input data
+        const validationResult = paymentSchema.safeParse(req.body);
+        if (!validationResult.success) {
+            console.log("Validation failed:", validationResult.error.errors);
+            return res.status(400).json(validationResult.error.errors);
+        }
 
-    // validate the input data
-    const validationResult = paymentSchema.safeParse(req.body);
-    if (!validationResult.success) {
-        console.log("Validation failed:", validationResult.error.errors);
-        return res.status(400).json(validationResult.error.errors);
-    }
+        //message validation is passed
+        console.log("validation passed");
 
-    //message validation is passed
-    console.log("validation passed")
+        // pass valid data to local variables
+        const { amount, currency, bank, recipientAccountNo, recipientName } =
+            validationResult.data;
 
-    // pass valid data to local variables
-    const {
-        amount,
-        currency,
-        bank,
-        recipientAccountNo,
-        recipientName
-    } = validationResult.data;
+        //logging the payment object
+        console.log("input validated and variables captured");
 
-    //logging the payment object
-    console.log("input validated and variables captured");
+        //get the swift code for the bank
+        const swiftCode = swiftCodes[bank];
 
-    // get users collections reference
-    const collection =  req.db.collection("transactions");
+        // create a new payment instance
+        const newPayment = new Payment({
+            amount: parseFloat(amount),
+            currency,
+            provider: "SWIFT",
+            swiftCode,
+            recipientAccountNo,
+            recipientBank: bank,
+            recipientName, //the name of the recipient
+            userId: req.user.id, //the user id of the current authenticated user logged in
+            isValidated: false, // the payment is not validated yet
+            createdAt: new Date(),
+        });
 
-    //logging that the collection has been gotten
-    console.log("collection got - transactions");
+        //payment model created
+        console.log("created payment model", chalk.green("done"));
 
-    //get the swift code for the bank
-    const swiftCode = swiftCodes[bank];
+        //inserting the payment into the database
+        //Payment.create is a mongoose method to insert a new document into the database
+        //similar to mongoClient.insertOne
+        const result = await Payment.create(newPayment);
 
-    // create a new payment instance
-    const newPayment = Payment({
-        amount: parseFloat(amount),
-        currency,
-        provider: "SWIFT",
-        swiftCode,
-        recipientAccountNo,
-        recipientBank: bank,
-        recipientName,//the name of the recipient
-        userId: req.user.id,//the user id of the current authenticated user logged in
-        isValidated: false// the payment is not validated yet
+        //Logging the result of the insertion
+        console.log("inserted into collection", result, chalk.green("done"));
+
+        //sends a response to the frontend
+        res.status(201).send({ message: "Payment registered successfully" });
+        console.log(chalk.green("done"));
     })
+);
 
-    console.log("created payment model");
+// 2. Get user payments. Endpoint: /transaction/user-payments
+router.get("/user-payments", auth, async (req, res) => {
+    console.log("Fetching payments for user:", req.user.id);
+    const userId = req.user.id;
+    try {
+        console.log(
+            "Attempting to find payments for userId:",
+            userId,
+            chalk.yellow("processing")
+        );
+        const payments = await Payment.find({ userId: userId }).sort({
+            createdAt: -1,
+        });
 
-    // save the payment to the database
-    await collection.insertOne(newPayment);
+        //logging theat payments have been fetched
+        console.log("Fetched payments:", payments);
+        //logging the number of payments found
+        console.log("Number of payments found:", payments.length);
 
-    console.log("inserted into collection");
-
-    // send a response
-    res.status(201).send({ message: "Payment registered successfully"});
-}));
+        //sending the payments to the frontend
+        res.status(200).json({ payments });
+        console.log(chalk.green("done")); //loggging that its done
+    } catch (error) {
+        //logging the error.
+        console.error("Error fetching payments:", error);
+        res
+            .status(500)
+            .json({ message: "Error fetching payments", error: error.message });
+    }
+});
 
 //user payment implemented
 export default router;
