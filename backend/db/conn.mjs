@@ -1,7 +1,6 @@
-import { MongoClient } from "mongodb";
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 import dotenv from "dotenv";
-import chalk from 'chalk';
+import chalk from "chalk";
 
 // load environment variables from the .env file
 dotenv.config();
@@ -18,28 +17,27 @@ if (!connectionString) {
 }
 
 // log connectionString
-console.log(chalk.gray(chalk.yellow("MongoDB Connection String:"), connectionString));
-
-// variable for holding database instance
-let dbInstance = null;
+console.log(
+    chalk.gray(chalk.yellow("MongoDB Connection String:"), connectionString)
+);
 
 // connect to mongodb database
 async function connectToDatabase() {
     try {
-        // establish client
-        const client = await new MongoClient(connectionString);
-        // connect client to the mongodb cluster
-        await client.connect();
+        //using a direct mongoose connection to the database.
+        await mongoose.connect(connectionString, {
+            dbName: databaseName,
+        });
 
-        // get the instance of the database
-        dbInstance = client.db(databaseName);
+        //log successful message saying connection to mongodb was successful
         console.log(chalk.green("Successfully connected to MongoDB"));
 
-        return dbInstance; // return database instance
+        return mongoose.connection; // return database connection
     } catch (error) {
         console.error(chalk.red("Failed to connect to MongoDB:", error));
         return null;
     }
 }
+
 // export function to connect to database
 export default connectToDatabase;
