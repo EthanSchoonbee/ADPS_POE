@@ -1,7 +1,6 @@
 // Initiate all imports
 import DOMPurify from "dompurify";
 import { JSDOM } from "jsdom";
-import csrf from "csurf";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 //this is the package that will be used to sanitize the data from the request body
@@ -26,10 +25,6 @@ const preventXssMiddleware = (req, res, next) => {
         next(new Error("XSS prevention failed."));
     }
 };
-
-//csrf protection is a middleware that protects unauthorized access to the online banking system server
-//takes in a cookie as an argument and sets the csrf token in the cookie to be used in the frontend.
-const csrfProtectionMiddleware = csrf({ cookie: true });
 
 //rate limit method middleware to limit the number of requests that can be made to the server
 const rateLimitMiddleware = rateLimit({
@@ -80,7 +75,6 @@ const securityMiddleware = [
         next();
     },
     preventXssMiddleware,
-    csrfProtectionMiddleware,
     rateLimitMiddleware,
     noSqlInjectionPreventionMiddleware,
     securityHeadersMiddleware,
