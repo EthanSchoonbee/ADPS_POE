@@ -1,10 +1,12 @@
-import express from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { z } from 'zod';
+import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { z } from "zod";
 import User from "../models/User.mjs";
 import connectDbMiddleware from "../middleware/connectDbMiddleware.mjs";
-import ExpressBrute from 'express-brute';
+import ExpressBrute from "express-brute";
+import { auth } from "../middleware/authMiddleware.mjs"; // Make sure this import is present
+import mongoose from "mongoose";
 
 // create an instance of the express router
 const router = express.Router();
