@@ -288,7 +288,7 @@ router.get(
             });
         } catch (error) {
             //if the user is not found then send an error message
-            console.error("Error fetching user information:", error, chalk.red("Failed to fetch user information"));
+            console.error("Error fetching user information:", error, "Failed to fetch user information");
             res.status(500).json({ error: "Internal server error" });//Will send an error message to the frontend
         }
     })

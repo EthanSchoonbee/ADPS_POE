@@ -4,7 +4,7 @@ import connectDbMiddleware from "../middleware/connectDbMiddleware.mjs";
 import Payment from "../models/Payment.mjs"; //importing the payment model
 import { auth } from "../middleware/authMiddleware.mjs"; // Import the auth middleware
 import mongoose from "mongoose";
-import chalk from "chalk";
+
 
 // create an instance of the express router
 const router = express.Router();
@@ -91,7 +91,7 @@ router.post(
         });
 
         //payment model created
-        console.log("created payment model", chalk.green("done"));
+        console.log("created payment model : done");
 
         //inserting the payment into the database
         //Payment.create is a mongoose method to insert a new document into the database
@@ -99,11 +99,11 @@ router.post(
         const result = await Payment.create(newPayment);
 
         //Logging the result of the insertion
-        console.log("inserted into collection", result, chalk.green("done"));
+        console.log("inserted into collection", result, " : done");
 
         //sends a response to the frontend
         res.status(201).send({ message: "Payment registered successfully" });
-        console.log(chalk.green("done"));
+        console.log("done");
     })
 );
 
@@ -115,7 +115,7 @@ router.get("/user-payments", auth, async (req, res) => {
         console.log(
             "Attempting to find payments for userId:",
             userId,
-            chalk.yellow("processing")
+            "processing"
         );
         const payments = await Payment.find({ userId: userId }).sort({
             createdAt: -1,
@@ -128,7 +128,7 @@ router.get("/user-payments", auth, async (req, res) => {
 
         //sending the payments to the frontend
         res.status(200).json({ payments });
-        console.log(chalk.green("done")); //loggging that its done
+        console.log("done"); //loggging that its done
     } catch (error) {
         //logging the error.
         console.error("Error fetching payments:", error);
