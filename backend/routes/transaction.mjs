@@ -6,7 +6,7 @@ import { auth } from "../middleware/authMiddleware.mjs"; // Import the auth midd
 import mongoose from "mongoose";
 import chalk from "chalk";
 // Add this import
-import securityMiddleware from "../middleware/securityMiddleware.js";
+import securityMiddleware from "../middleware/securityMiddleware.mjs";
 
 // create an instance of the express router
 const router = express.Router();

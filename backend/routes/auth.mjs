@@ -8,7 +8,7 @@ import ExpressBrute from "express-brute";
 import { auth } from "../middleware/authMiddleware.mjs"; // Make sure this import is present
 import mongoose from "mongoose";
 // Add this import
-import securityMiddleware from "../middleware/securityMiddleware.js";
+import securityMiddleware from "../middleware/securityMiddleware.mjs";
 import chalk from 'chalk';
 
 // create an instance of the express router
