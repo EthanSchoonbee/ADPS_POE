@@ -36,8 +36,8 @@ const Payment = () => {
         STANDARD_BANK: "SBZAZAJJ",
         ABSA: "ABSAZAJJ",
         FNB: "FIRNZAJJ",
-        Capitec: "CABLZAJJ",
-        Nedbank: "NEDSZAJJ",
+        CAPITEC: "CABLZAJJ",
+        NEDBANK: "NEDSZAJJ",
     };
 
     // Assigning symbols to currencies
@@ -46,6 +46,10 @@ const Payment = () => {
         USD: "$",
         GBP: "£",
     };
+
+    //State that will manage showing the success alert for when payment is successful
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         setSwiftCode(bankSwiftCodes[selectedBank] || "");
@@ -136,13 +140,16 @@ const Payment = () => {
         setMessage("making payment");
 
         // Get the token from local storage
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         //if the token is not present then will display an error message
         //and log user out
         if (!token) {
             //will display an error message
-            setMessage({ text: "You must be logged in to make a payment", type: "error" });
-            navigate('/login');//log user out
+            setMessage({
+                text: "You must be logged in to make a payment",
+                type: "error",
+            });
+            navigate("/login"); //log user out
             return;
         }
 
@@ -154,7 +161,7 @@ const Payment = () => {
             currency: currencySymbols[selectedCurrency],
             bank: selectedBank,
             recipientAccountNo: accountNumber,
-            recipientName: recipientName
+            recipientName: recipientName,
         };
 
         // Log the payload being sent to the backend
@@ -167,11 +174,20 @@ const Payment = () => {
                 payload,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
             );
             setMessage({ text: response.data.message, type: "success" });
+            setShowModal(true);
+
+            // Clear input boxes and close modal after 3 seconds
+            setTimeout(() => {
+                setPaymentAmount(`${currencySymbol} `);
+                setRecipientName("");
+                setAccountNumber("");
+                setShowModal(false);
+            }, 3000);
         } catch (err) {
             const errorMessage =
                 err.response?.data?.error ||
@@ -198,6 +214,11 @@ const Payment = () => {
             //will set the message to null
             setMessage(null);
         }
+    };
+
+    //This function handles when the cancel button is clicked
+    const handleCancel = () => {
+        navigate("/Dashboard"); //will redirect the user to the dashboard
     };
 
     return (
@@ -256,8 +277,8 @@ const Payment = () => {
                         <option value="STANDARD_BANK">Standard Bank</option>
                         <option value="ABSA">ABSA</option>
                         <option value="FNB">FNB</option>
-                        <option value="Capitec">Capitec</option>
-                        <option value="Nedbank">Nedbank</option>
+                        <option value="CAPITEC">Capitec</option>
+                        <option value="NEDBANK">Nedbank</option>
                     </select>
                 </div>
 
@@ -309,7 +330,10 @@ const Payment = () => {
                 <div className="paymentSubmit" onClick={handlePayment}>
                     Pay Now
                 </div>
-                <div className="paymentSubmit">Cancel</div>
+                {/* Button to cancel the payment */}
+                <div className="paymentSubmit" onClick={handleCancel}>
+                    Cancel
+                </div>
             </div>
 
             {/*will display the message here*/}
@@ -321,6 +345,15 @@ const Payment = () => {
                 >
                     {message.text}
                 </p>
+            )}
+
+            {showModal && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h2>Payment Successful!</h2>
+                        <p>Your payment has been processed successfully.</p>
+                    </div>
+                </div>
             )}
         </div>
     );
