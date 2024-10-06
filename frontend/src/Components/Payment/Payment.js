@@ -149,7 +149,7 @@ const Payment = () => {
                 text: "You must be logged in to make a payment",
                 type: "error",
             });
-            navigate("/login"); //log user out
+            navigate("/"); //log user out
             return;
         }
 
@@ -187,6 +187,7 @@ const Payment = () => {
                 setRecipientName("");
                 setAccountNumber("");
                 setShowModal(false);
+                setMessage(null);
             }, 3000);
         } catch (err) {
             const errorMessage =

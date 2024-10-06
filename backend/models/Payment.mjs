@@ -11,7 +11,8 @@ const PaymentSchema = new mongoose.Schema({
     recipientBank: { type: String, required: true },
     recipientName: { type: String, required: true },
     isValidated: { type: Boolean, default: false },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }  // Reference to the user making the payment
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } ,
+    createdAt: { type: Date, default: Date.now }
 });
 
 // export the payment schema
