@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"; //useEffect which will be used to check if the user is logged in or not
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 // Importing CSS file
 import "./Dashboard.css";
@@ -16,6 +17,7 @@ const Dashboard = () => {
     const [user, setUser] = useState(null);
     const [showAccountNumber, setShowAccountNumber] = useState(false);
     const [activeSection, setActiveSection] = useState("menu");
+    const [authError, setAuthError] = useState(null);
 
     // Function to handle logout
     const handleLogout = () => {
@@ -30,8 +32,21 @@ const Dashboard = () => {
         if (!token) {
             navigate("/");
         } else {
-            fetchUserData();
-            fetchUserPayments();
+            try {
+                const decodedToken = jwtDecode(token);
+                if (decodedToken.role !== "user") {
+                    setAuthError("You don't have permission to access this page.");
+                    setTimeout(() => {
+                        navigate("/EmployeeDash");
+                    }, 3000); // Redirect after 3 seconds
+                } else {
+                    fetchUserData();
+                    fetchUserPayments();
+                }
+            } catch (error) {
+                console.error("Error decoding token:", error);
+                navigate("/");
+            }
         }
     }, [navigate]);
 
@@ -268,58 +283,70 @@ const Dashboard = () => {
 
     return (
         <div className="dashboardContainer">
-            <div className="dashboardHeader">
-                <div className="dashboardText">Dashboard</div>
-                <div className="dashboardUnderline"></div>
-            </div>
-
-            <div className="dashboardContent">
-                <div className="mainSection">
-                    {/* Left Section (Menu) */}
-                    <div className="leftSection">
-                        <div className="customerName">
-                            <h2>
-                                Hello, {user ? `${user.firstname} ${user.lastname}` : "User"}
-                            </h2>
-                        </div>
-
-                        <div className="verticalMenu">
-                            <div
-                                className={`menuItem ${
-                                    activeSection === "menu" ? "active" : ""
-                                }`}
-                                onClick={() => setActiveSection("menu")}
-                            >
-                                Menu
-                            </div>
-                            <div
-                                className={`menuItem ${
-                                    activeSection === "transaction" ? "active" : ""
-                                }`}
-                                onClick={() => setActiveSection("transaction")}
-                            >
-                                Transaction
-                            </div>
-                            <div
-                                className={`menuItem ${
-                                    activeSection === "payments" ? "active" : ""
-                                }`}
-                                onClick={() => setActiveSection("payments")}
-                            >
-                                Payments
-                            </div>
-                            <div className="logoutItem">
-                                <button onClick={handleLogout} className="logoutBtn">
-                                    Logout
-                                </button>
-                            </div>
-                        </div>
+            {authError ? (
+                <div className="error-container">
+                    <div className="error-message">
+                        <h2>Access Denied</h2>
+                        <p>{authError}</p>
+                        <p>Redirecting you to the Employee Dashboard...</p>
+                    </div>
+                </div>
+            ) : (
+                <>
+                    <div className="dashboardHeader">
+                        <div className="dashboardText">Dashboard</div>
+                        <div className="dashboardUnderline"></div>
                     </div>
 
-                    {/* Right Section (Content) */}
-                    <div className="rightSection">{renderContent()}</div>
-                </div>
-            </div>
+                    <div className="dashboardContent">
+                        <div className="mainSection">
+                            {/* Left Section (Menu) */}
+                            <div className="leftSection">
+                                <div className="customerName">
+                                    <h2>
+                                        Hello, {user ? `${user.firstname} ${user.lastname}` : "User"}
+                                    </h2>
+                                </div>
+
+                                <div className="verticalMenu">
+                                    <div
+                                        className={`menuItem ${
+                                            activeSection === "menu" ? "active" : ""
+                                        }`}
+                                        onClick={() => setActiveSection("menu")}
+                                    >
+                                        Menu
+                                    </div>
+                                    <div
+                                        className={`menuItem ${
+                                            activeSection === "transaction" ? "active" : ""
+                                        }`}
+                                        onClick={() => setActiveSection("transaction")}
+                                    >
+                                        Transaction
+                                    </div>
+                                    <div
+                                        className={`menuItem ${
+                                            activeSection === "payments" ? "active" : ""
+                                        }`}
+                                        onClick={() => setActiveSection("payments")}
+                                    >
+                                        Payments
+                                    </div>
+                                    <div className="logoutItem">
+                                        <button onClick={handleLogout} className="logoutBtn">
+                                            Logout
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right Section (Content) */}
+                            <div className="rightSection">{renderContent()}</div>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 };
