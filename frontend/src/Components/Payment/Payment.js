@@ -17,6 +17,10 @@ const accountNumberRegex = /^\d{7,11}$/;
 // Add this regex pattern at the top of your file
 const amountRegex = /^(\d+(\.\d{1,2})?)$/;
 
+//regex pattern for sanitizing all the input. will prevent any malicious code from being entered. Such as <script>alert("XSS")</script>
+const inputSanitizationRegex =
+    /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|TRUNCATE|EXEC|UNION|CREATE|ALTER|SCRIPT|SRC|IMG|ONERROR|ONLOAD|ONCLICK|ALERT|PROMPT|EVAL)\b)|[^a-zA-Z0-9\s\.,;:\?!'\"()\-@#$%&*+\/=~|^{}[\]<>]/i;
+
 const Payment = () => {
     // State to manage selected bank, SWIFT code, currency symbol, and payment amount
     const [selectedBank, setSelectedBank] = useState("FNB");
@@ -50,6 +54,10 @@ const Payment = () => {
     //State that will manage showing the success alert for when payment is successful
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [showModal, setShowModal] = useState(false);
+
+    // Add state for input-specific error messages
+    const [nameError, setNameError] = useState(null);
+    const [accountError, setAccountError] = useState(null);
 
     useEffect(() => {
         setSwiftCode(bankSwiftCodes[selectedBank] || "");
@@ -96,6 +104,11 @@ const Payment = () => {
         e.preventDefault();
         setMessage(null);
 
+        // Check if the recipient does not match the input sanitization regex
+        const isNameValid = !inputSanitizationRegex.test(recipientName);
+        //if the account does not match the regex pattern
+        const isAccValid = !inputSanitizationRegex.test(accountNumber);
+
         // Remove currency symbol and all spaces, then trim
         const numericAmount = paymentAmount
             .replace(currencySymbol, "")
@@ -111,7 +124,29 @@ const Payment = () => {
             return;
         }
 
-        // Use a regex that allows for any number of digits, with optional decimal places
+        //Checks if the recipient name is not valid
+        if(!isNameValid){
+            setMessage({
+                text: "Potential attack. Input sanitized.",
+                type: "error",
+            });
+            //sets the recipient name to empty
+            setRecipientName("");
+            return;
+        }
+
+        //if the account number is not valid then will display an error message
+        if(!isAccValid) {
+            setMessage({
+                text: "Potential Attack. Input sanitized.",
+                type: "error",
+            });
+            //sets the account number to empty
+            setAccountNumber("");
+            return
+        }
+
+        // regex that allows for any number of digits, with optional decimal places
         const amountRegex = /^\d+(\.\d{1,2})?$/;
 
         // Check if the amount is a valid number and matches the regex patter
@@ -123,6 +158,8 @@ const Payment = () => {
             });
             return;
         }
+
+
 
         // Parse the amount to a float
         const parsedAmount = parseFloat(numericAmount);
@@ -197,25 +234,17 @@ const Payment = () => {
         }
     };
 
-    // creating a function to handle when the account number is changed
-    const handleAccountNumberChange = (e) => {
-        //getting the value of the account number
-        const value = e.target.value;
-        //setting the account number to the value
-        setAccountNumber(value);
+    //This function will handle the recipient name change
+    const handleRecipientNameChange = (e) => {
+        const rawName = e.target.value;
+        setRecipientName(rawName);
+    }
 
-        //if there is a value and the account number does not match the regex pattern then will display an error
-        if (value && !accountNumberRegex.test(value)) {
-            setMessage({
-                //the account number should be between 7 and 11 digits
-                text: "Account number should be between 7 and 11 digits.",
-                type: "error",
-            });
-        } else {
-            //will set the message to null
-            setMessage(null);
-        }
-    };
+    //This function will handle the account number change
+    const handleAccountNumberChange = (e) => {
+        const rawAccountNumber = e.target.value;
+        setAccountNumber(rawAccountNumber);
+    }
 
     //This function handles when the cancel button is clicked
     const handleCancel = () => {
@@ -306,10 +335,11 @@ const Payment = () => {
                     <input
                         type="text"
                         value={recipientName}
-                        onChange={(e) => setRecipientName(e.target.value)}
+                        onChange={handleRecipientNameChange}
                         placeholder="  Recipient Name:"
                     />
                 </div>
+                {nameError && <p className="error-message">{nameError}</p>}
 
                 {/* Recipient account number */}
                 <div className="paymentLabel">
@@ -324,6 +354,7 @@ const Payment = () => {
                         placeholder="Recipient's Account No"
                     />
                 </div>
+                {accountError && <p className="error-message">{accountError}</p>}
             </div>
             {/* Buttons */}
 
