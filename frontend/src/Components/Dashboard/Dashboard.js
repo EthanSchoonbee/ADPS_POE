@@ -285,10 +285,10 @@ const Dashboard = () => {
         <div className="dashboardContainer">
             {authError ? (
                 <div className="error-container">
-                    <div className="error-message">
+                    <div className="errorMessage">
                         <h2>Access Denied</h2>
-                        <p>{authError}</p>
-                        <p>Redirecting you to the Employee Dashboard...</p>
+                        <p className="flash">{authError}</p>
+                        <p className="flash">Redirecting you to the Employee Dashboard...</p>
                     </div>
                 </div>
             ) : (

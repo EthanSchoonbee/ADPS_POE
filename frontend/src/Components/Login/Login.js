@@ -8,6 +8,10 @@ import '../Login/Login.css';
 import user_icon from '../Assets/person.png'
 import password_icon from '../Assets/password.png'
 
+// regex pattern for sanitizing all the input. will prevent any malicious code from being entered. Such as <script>alert("XSS")</script>
+const inputSanitizationRegex =
+    /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|TRUNCATE|EXEC|UNION|CREATE|ALTER|SCRIPT|SRC|IMG|ONERROR|ONLOAD|ONCLICK|ALERT|PROMPT|EVAL)\b)|[^a-zA-Z0-9\s\.,;:\?!'\"()\-@#$%&*+\/=~|^{}[\]<>]/i;
+
 const Login = () => {
 
     //State to handle visibility for the password field
@@ -53,6 +57,35 @@ const Login = () => {
             const now = new Date().getTime();
             const timeLeft = Math.ceil((retryAfter - now) / 1000);
             setMessage({ text: `Please wait before trying to log in again. ${timeLeft} seconds.`, type: "error" });
+            return;
+        }
+
+        // helper function to validate fields
+        const validateInput = (input) => !inputSanitizationRegex.test(input);
+
+        // validate all inputs
+        const isUsernameValid = validateInput(username);
+        const isPasswordValid = validateInput(password);
+
+        // array to hold invalid fields
+        const invalidFields = [];
+
+        // check for any invalid fields and add them to the array
+        if (!isUsernameValid) invalidFields.push('Username');
+        if (!isPasswordValid) invalidFields.push('Password');
+
+
+        // if any fields are invalid, display error and clear those fields
+        if (invalidFields.length > 0) {
+            setMessage({
+                text: `Potential attack detected in: ${invalidFields.join(', ')}. Input sanitized.`,
+                type: "error",
+            });
+
+            // clear all invalid fields
+            if (!isUsernameValid) setUsername('');
+            if (!isPasswordValid) setPassword('');
+
             return;
         }
 

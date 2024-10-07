@@ -45,6 +45,61 @@
     margin-bottom: 50px;
 }
 
+/* error container for the error message */
+.error-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-0%, -50%);
+    z-index: 1000;
+}
+
+/*error message for the payment container*/
+.paymentContainer .errorMessage{
+    background-color: white;
+    color: black;
+    padding: 20px 25px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    max-width: 500px;
+    width: 90%;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/*error message header*/
+.errorMessage h2{
+    color: red;
+    font-size:50px;
+    margin-bottom: 15px;
+}
+
+/*error for paragraph*/
+.errorMessage p{
+    font-size: 18px;
+    margin-bottom: 8px;
+    font-style: italic;
+    line-height: 1.5;
+}
+
+/*flashing animation for error message paragraph*/
+.errorMessage p.flash{
+    animation: flash 0.5s infinite;
+}
+
+/*flashing animation for error message paragraph*/
+@keyframes flash {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 /* Organizes the input fields in a grid layout */
 .paymentInputs {
     margin-top: 30px;
