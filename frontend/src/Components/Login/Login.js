@@ -8,6 +8,10 @@ import '../Login/Login.css';
 import user_icon from '../Assets/person.png'
 import password_icon from '../Assets/password.png'
 
+//regex pattern for sanitizing all the input. will prevent any malicious code from being entered. Such as <script>alert("XSS")</script>
+const inputSanitizationRegex =
+    /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|TRUNCATE|EXEC|UNION|CREATE|ALTER|SCRIPT|SRC|IMG|ONERROR|ONLOAD|ONCLICK|ALERT|PROMPT|EVAL)\b)|[^a-zA-Z0-9\s\.,;:\?!'\"()\-@#$%&*+\/=~|^{}[\]<>]/i;
+
 const Login = () => {
 
     //State to handle visibility for the password field
@@ -48,11 +52,42 @@ const Login = () => {
         setMessage(null);
         console.log("button clicked");
 
+
+
         // check if the user cannot log in
         if (!canLogin) {
             const now = new Date().getTime();
             const timeLeft = Math.ceil((retryAfter - now) / 1000);
             setMessage({ text: `Please wait before trying to log in again. ${timeLeft} seconds.`, type: "error" });
+            return;
+        }
+
+        // Check if the recipient does not match the input sanitization regex
+        const isUsernameValid = !inputSanitizationRegex.test(username);
+        //if the account does not match the regex pattern
+        const isPasswordValid = !inputSanitizationRegex.test(password);
+
+        // checks if the username matches a potential attack syntax
+        if(!isUsernameValid){
+            setMessage({
+                text: "Potential attack. Input sanitized.",
+                type: "error",
+            });
+            // set the  username adn password to empty
+            setUsername('');
+            setPassword('');
+            return;
+        }
+
+        // checks if the password matches a potential attack syntax
+        if(!isPasswordValid){
+            setMessage({
+                text: "Potential attack. Input sanitized.",
+                type: "error",
+            });
+            // set the  username adn password to empty
+            setUsername('');
+            setPassword('');
             return;
         }
 
