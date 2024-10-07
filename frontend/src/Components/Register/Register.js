@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 
 // Importing routing
 import {Link, useNavigate} from 'react-router-dom';
+import axios from "axios";
 
 // Importing css file
 import './Register.css'
@@ -13,7 +14,7 @@ import password_icon from '../Assets/password.png'
 import pencil_icon from '../Assets/pencil.png'
 import card_icon from '../Assets/card.png'
 import email_icon from '../Assets/email.png'
-import axios from "axios";
+
 
 
 const Register = () => {
@@ -61,7 +62,7 @@ const Register = () => {
             if (token) {
                 localStorage.setItem('token', token);
                 setMessage({ text: "Successfully registered!", type: "success" });
-                navigate('/Payment'); // Redirect to homepage or desired route
+                navigate('/Dashboard'); // Redirect to homepage or desired route
             } else {
                 setMessage({ text: 'Registration failed', type: "error" });
             }
