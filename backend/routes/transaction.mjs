@@ -4,10 +4,17 @@ import connectDbMiddleware from "../middleware/connectDbMiddleware.mjs";
 import Payment from "../models/Payment.mjs"; //importing the payment model
 import { auth } from "../middleware/authMiddleware.mjs"; // Import the auth middleware
 import mongoose from "mongoose";
-
+import chalk from "chalk";
+// Add this import
+import securityMiddleware from "../middleware/securityMiddleware.mjs";
 
 // create an instance of the express router
 const router = express.Router();
+
+// Apply security middleware to all routes in this router
+console.log(chalk.yellow('Applying security middleware to transaction routes...'));
+router.use(securityMiddleware);
+console.log(chalk.green('Security middleware applied to transaction routes.'));
 
 //declaration of the regex for the input validation
 //this amount regex is used to validate that the amount is a number with a maximum of 2 decimal places
@@ -132,6 +139,24 @@ router.get("/user-payments", auth, async (req, res) => {
     } catch (error) {
         //logging the error.
         console.error("Error fetching payments:", error);
+        res
+            .status(500)
+            .json({ message: "Error fetching payments", error: error.message });
+    }
+});
+
+// Fetch all payments (for employee dashboard)
+router.get("/all-payments", auth, async (req, res) => {
+    try {
+        // Check if the user is an employee
+        if (req.user.role !== "employee") {
+            return res.status(403).json({ message: "Access denied. Employee only." });
+        }
+
+        const payments = await Payment.find().sort({ createdAt: -1 });
+        res.status(200).json({ payments });
+    } catch (error) {
+        console.error("Error fetching all payments:", error);
         res
             .status(500)
             .json({ message: "Error fetching payments", error: error.message });
