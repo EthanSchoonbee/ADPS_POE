@@ -8,7 +8,7 @@ import '../Login/Login.css';
 import user_icon from '../Assets/person.png'
 import password_icon from '../Assets/password.png'
 
-//regex pattern for sanitizing all the input. will prevent any malicious code from being entered. Such as <script>alert("XSS")</script>
+// regex pattern for sanitizing all the input. will prevent any malicious code from being entered. Such as <script>alert("XSS")</script>
 const inputSanitizationRegex =
     /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|TRUNCATE|EXEC|UNION|CREATE|ALTER|SCRIPT|SRC|IMG|ONERROR|ONLOAD|ONCLICK|ALERT|PROMPT|EVAL)\b)|[^a-zA-Z0-9\s\.,;:\?!'\"()\-@#$%&*+\/=~|^{}[\]<>]/i;
 
@@ -52,8 +52,6 @@ const Login = () => {
         setMessage(null);
         console.log("button clicked");
 
-
-
         // check if the user cannot log in
         if (!canLogin) {
             const now = new Date().getTime();
@@ -62,32 +60,32 @@ const Login = () => {
             return;
         }
 
-        // Check if the recipient does not match the input sanitization regex
-        const isUsernameValid = !inputSanitizationRegex.test(username);
-        //if the account does not match the regex pattern
-        const isPasswordValid = !inputSanitizationRegex.test(password);
+        // helper function to validate fields
+        const validateInput = (input) => !inputSanitizationRegex.test(input);
 
-        // checks if the username matches a potential attack syntax
-        if(!isUsernameValid){
+        // validate all inputs
+        const isUsernameValid = validateInput(username);
+        const isPasswordValid = validateInput(password);
+
+        // array to hold invalid fields
+        const invalidFields = [];
+
+        // check for any invalid fields and add them to the array
+        if (!isUsernameValid) invalidFields.push('Username');
+        if (!isPasswordValid) invalidFields.push('Password');
+
+
+        // if any fields are invalid, display error and clear those fields
+        if (invalidFields.length > 0) {
             setMessage({
-                text: "Potential attack. Input sanitized.",
+                text: `Potential attack detected in: ${invalidFields.join(', ')}. Input sanitized.`,
                 type: "error",
             });
-            // set the  username adn password to empty
-            setUsername('');
-            setPassword('');
-            return;
-        }
 
-        // checks if the password matches a potential attack syntax
-        if(!isPasswordValid){
-            setMessage({
-                text: "Potential attack. Input sanitized.",
-                type: "error",
-            });
-            // set the  username adn password to empty
-            setUsername('');
-            setPassword('');
+            // clear all invalid fields
+            if (!isUsernameValid) setUsername('');
+            if (!isPasswordValid) setPassword('');
+
             return;
         }
 
