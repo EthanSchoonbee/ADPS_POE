@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-import chalk from 'chalk'
 
 // middleware to authenticate the user and verify the JWT token
 export const auth = (req, res, next) => {
@@ -17,7 +16,7 @@ export const auth = (req, res, next) => {
         next(); // move to next middleware/route handler
     } catch(error) {
         //log token error
-        console.error(chalk.red("Invalid token:", error));
+        console.error("Invalid token:", error);
 
         // check if token error was expiry
         if (error.name === 'TokenExpiredError') {

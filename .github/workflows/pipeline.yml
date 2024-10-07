@@ -1,0 +1,66 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - dev  # Triggers on pushes to the 'main' branch
+
+jobs:
+  # Backend Build and Test
+  backend:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:   # If you use MongoDB, you can start a service like this
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: --bind_ip_all
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies for backend
+        working-directory: ./backend
+        run: npm install
+
+      - name: Run backend tests
+        working-directory: ./backend
+        run: npm test
+
+  # Frontend Build and Test
+  frontend:
+    runs-on: ubuntu-latest
+    needs: backend  # This ensures the frontend job runs after backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies for frontend
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Run frontend tests
+        working-directory: ./frontend
+        run: npm test
+
+  # Deploy Stage (optional)
+  deploy:
+    runs-on: ubuntu-latest
+    needs: frontend  # Ensures deployment happens after successful frontend build
+    steps:
+      - name: Deploy application
+        run: |
+          echo "Deploying the app..."  # Replace this with your actual deployment script
