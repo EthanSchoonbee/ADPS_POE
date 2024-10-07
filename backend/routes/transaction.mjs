@@ -3,8 +3,6 @@ import { z } from "zod";
 import connectDbMiddleware from "../middleware/connectDbMiddleware.mjs";
 import Payment from "../models/Payment.mjs"; //importing the payment model
 import { auth } from "../middleware/authMiddleware.mjs"; // Import the auth middleware
-import mongoose from "mongoose";
-import chalk from "chalk";
 // Add this import
 import securityMiddleware from "../middleware/securityMiddleware.mjs";
 
@@ -12,9 +10,9 @@ import securityMiddleware from "../middleware/securityMiddleware.mjs";
 const router = express.Router();
 
 // Apply security middleware to all routes in this router
-console.log(chalk.yellow('Applying security middleware to transaction routes...'));
+console.log('Applying security middleware to transaction routes...');
 router.use(securityMiddleware);
-console.log(chalk.green('Security middleware applied to transaction routes.'));
+console.log('Security middleware applied to transaction routes.');
 
 //declaration of the regex for the input validation
 //this amount regex is used to validate that the amount is a number with a maximum of 2 decimal places

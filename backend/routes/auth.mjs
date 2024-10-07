@@ -9,7 +9,6 @@ import { auth } from "../middleware/authMiddleware.mjs"; // Make sure this impor
 import mongoose from "mongoose";
 // Add this import
 import securityMiddleware from "../middleware/securityMiddleware.mjs";
-import chalk from 'chalk';
 
 // create an instance of the express router
 const router = express.Router();
@@ -80,9 +79,9 @@ const asyncHandler = (fn) => (req, res, next) => {
 router.use(connectDbMiddleware);
 
 // Apply security middleware to all routes in this router
-console.log(chalk.yellow('Applying security middleware to auth routes...'));
+console.log('Applying security middleware to auth routes...');
 router.use(securityMiddleware);
-console.log(chalk.green('Security middleware applied to auth routes.'));
+console.log('Security middleware applied to auth routes.');
 
 console.log("Loaded Route : auth");
 // ENDPOINTS:
@@ -327,7 +326,7 @@ router.get(
             console.error(
                 "Error fetching user information:",
                 error,
-                chalk.red("Failed to fetch user information")
+                "Failed to fetch user information"
             );
             res.status(500).json({ error: "Internal server error" }); //Will send an error message to the frontend
         }
