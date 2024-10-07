@@ -3,7 +3,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import {jwtDecode} from "jwt-decode";
 //Importing css file
-import './Login.css'
+import '../Login/Login.css';
 //Importing icons
 import user_icon from '../Assets/person.png'
 import password_icon from '../Assets/password.png'
@@ -127,7 +127,7 @@ const Login = () => {
                     <img src={user_icon} alt=""/>
                     <input
                         type="username"
-                        placeholder="   Username"
+                        placeholder="Username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
@@ -138,7 +138,7 @@ const Login = () => {
                     {/* Implementing password visibility */}
                     <input
                         type={showPassword ? "text" : "password"}
-                        placeholder="   Password"
+                        placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
@@ -154,7 +154,7 @@ const Login = () => {
                 <p>
                     Don't have an account? <Link to="/register">Click here to register</Link>
                 </p>
-                <div className="loginSubmit" onClick={handleLogin}>Login</div>
+                <div className="loginSubmit" onClick={handleLogin} data-testid="login-button">Login</div>
             </div>
 
             {message && (

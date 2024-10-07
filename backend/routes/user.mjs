@@ -1,7 +1,6 @@
 import express from 'express';
 import connectToDatabase from '../db/conn.mjs';
-import { ObjectId } from "mongodb"; 
-import chalk from "chalk";
+import { ObjectId } from "mongodb";
 
 const router = express.Router();
 

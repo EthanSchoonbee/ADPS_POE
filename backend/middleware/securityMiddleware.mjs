@@ -5,7 +5,6 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 //this is the package that will be used to sanitize the data from the request body
 import mongoSanitize from "express-mongo-sanitize";
-import chalk from 'chalk';
 
 //this is jsdom package that will be used to create a window object which is for the DOMPurify package
 const window = new JSDOM("").window;
@@ -71,7 +70,7 @@ const removeSensitiveHeadersMiddleware = (req, res, next) => {
 
 const securityMiddleware = [
     (req, res, next) => {
-        console.log(chalk.cyan(`[${new Date().toISOString()}] Security middleware applied to ${req.method} ${req.path}`));
+        console.log(`[${new Date().toISOString()}] Security middleware applied to ${req.method} ${req.path}`);
         next();
     },
     preventXssMiddleware,
