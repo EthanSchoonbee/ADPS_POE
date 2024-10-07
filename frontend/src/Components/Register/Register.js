@@ -15,7 +15,9 @@ import pencil_icon from '../Assets/pencil.png'
 import card_icon from '../Assets/card.png'
 import email_icon from '../Assets/email.png'
 
-
+// regex pattern for sanitizing all the input. will prevent any malicious code from being entered. Such as <script>alert("XSS")</script>
+const inputSanitizationRegex =
+    /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|TRUNCATE|EXEC|UNION|CREATE|ALTER|SCRIPT|SRC|IMG|ONERROR|ONLOAD|ONCLICK|ALERT|PROMPT|EVAL)\b)|[^a-zA-Z0-9\s\.,;:\?!'\"()\-@#$%&*+\/=~|^{}[\]<>]/i;
 
 const Register = () => {
     
@@ -44,6 +46,52 @@ const Register = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
         setMessage(null);
+
+        // helper function to validate fields
+        const validateInput = (input) => !inputSanitizationRegex.test(input);
+
+        // validate all inputs
+        const isFirstNameValid = validateInput(firstName);
+        const isLastNameValid = validateInput(lastName);
+        const isUsernameValid = validateInput(username);
+        const isEmailValid = validateInput(email);
+        const isIdNumberValid = validateInput(idNumber);
+        const isAccountNumberValid = validateInput(accountNumber);
+        const isPasswordValid = validateInput(password);
+        const isConfirmPasswordValid = validateInput(confirmPassword);
+
+        // array to hold invalid fields
+        const invalidFields = [];
+
+        // check for any invalid fields and add them to the array
+        if (!isFirstNameValid) invalidFields.push('First Name');
+        if (!isLastNameValid) invalidFields.push('Last Name');
+        if (!isUsernameValid) invalidFields.push('Username');
+        if (!isEmailValid) invalidFields.push('Email');
+        if (!isIdNumberValid) invalidFields.push('ID Number');
+        if (!isAccountNumberValid) invalidFields.push('Account Number');
+        if (!isPasswordValid) invalidFields.push('Password');
+        if (!isConfirmPasswordValid) invalidFields.push('Confirm Password');
+
+        // if any fields are invalid, display error and clear those fields
+        if (invalidFields.length > 0) {
+            setMessage({
+                text: `Potential attack detected in: ${invalidFields.join(', ')}. Input sanitized.`,
+                type: "error",
+            });
+
+            // clear all invalid fields
+            if (!isFirstNameValid) setFirstName('');
+            if (!isLastNameValid) setLastName('');
+            if (!isUsernameValid) setUsername('');
+            if (!isEmailValid) setEmail('');
+            if (!isIdNumberValid) setIdNumber('');
+            if (!isAccountNumberValid) setAccountNumber('');
+            if (!isPasswordValid) setPassword('');
+            if (!isConfirmPasswordValid) setConfirmPassword('');
+
+            return;
+        }
 
         try {
             const response = await axios.post('https://localhost:3001/api/auth/signup', {
