@@ -1,0 +1,161 @@
+/* This section styles the payment form */
+
+/* Makes the header of the payment form look nice and centered */
+.paymentHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px; /* Adds some breathing room between elements */
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Styles the labels for input fields */
+.paymentLabel {
+    margin-top: 5px;
+    margin-left: 70px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Makes the main "Payment" text stand out */
+.paymentText {
+    color: #3c009d;
+    font-size: 42px;
+    font-weight: 700;
+}
+
+/* Adds a cool underline beneath the payment text */
+.paymentUnderline {
+    width: 61px;
+    height: 6px;
+    background: #3c009d;
+    border-radius: 9px;
+}
+
+/* Sets up the main container for the payment form */
+.paymentContainer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 650px;
+    margin: auto;
+    margin-top: 90px;
+    background: #fff;
+    margin-bottom: 50px;
+}
+
+/* Organizes the input fields in a grid layout */
+.paymentInputs {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Creates two equal columns */
+    gap: 25px;
+    justify-items: left;
+}
+
+/* Styles the dropdown boxes */
+.paymentDropbox {
+    margin-left: 20px;
+    width: 200px;
+    height: 30px;
+    font-size: 15px;
+    border: none;
+    background-color: #eaeaea;
+}
+
+/* Styles the input fields */
+.paymentInput {
+    padding-left: 10px;
+    display: flex;
+    align-items: center; /* Vertically centers the input text */
+    width: 90%;
+    height: 50px;
+    background: #eaeaea;
+    border-radius: 6px;
+}
+
+/* Styles the actual input elements inside .paymentInput */
+.paymentInput input {
+    height: 50px;
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    padding-left: 15px;
+}
+
+/* Positions the submit button */
+.paymentSubmit-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 60px auto;
+}
+
+/* Styles the submit button */
+.paymentSubmit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 47px;
+    color: #fff;
+    background: #4c00b4;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Styles for error and success messages */
+.error-message,
+.success-message {
+    display: flex;
+    justify-content: center; /* centers horizontally */
+    align-items: center; /* centers vertically */
+    height: 100%; /* make sure the container has height to allow vertical centering */
+    text-align: center; /* ensures text is centered */
+}
+
+.error-message {
+    color: #c52424; /* error color */
+}
+
+.success-message {
+    color: #4fc23e; /* success color */
+}
+
+/* Styles for the modal popup */
+.modal {
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 80%;
+    width: 300px;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: #4caf50;
+}
+
+.modal-content p {
+    margin-bottom: 0;
+}

@@ -1,0 +1,365 @@
+/* This is the main container for the dashboard */
+.dashboardContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1100px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+/* This adds a cool colorful line at the top of the dashboard */
+.dashboardContainer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #3c009d, #6a00ff);
+}
+
+/* This is for the top part of the dashboard where the title goes */
+.dashboardHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(to bottom, #f8f8f8, #fff);
+}
+
+/* This makes the "Dashboard" text look fancy */
+.dashboardText {
+    color: #3c009d;
+    font-size: 42px;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* This is the little line under the "Dashboard" text */
+.dashboardUnderline {
+    width: 61px;
+    height: 6px;
+    background: #3c009d;
+    border-radius: 9px;
+    box-shadow: 0 2px 4px rgba(60, 0, 157, 0.3);
+}
+
+/* This is where all the dashboard stuff goes */
+.dashboardContent {
+    display: flex;
+    width: 100%;
+    padding: 15px;
+}
+
+/* This splits the dashboard into two parts */
+.mainSection {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+}
+
+/* This is the left side of the dashboard */
+.leftSection {
+    flex: 0 0 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* This is the right side of the dashboard */
+.rightSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* This is where the customer's name goes */
+.customerName {
+    text-align: left;
+    width: 100%;
+}
+
+/* This makes the customer's name look nice */
+.customerName h2 {
+    color: #3c009d;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+/* This is for the menu on the left side */
+.verticalMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* This is for each item in the menu */
+.menuItem {
+    padding: 10px 15px;
+    background: #eaeaea;
+    text-align: left;
+    border-radius: 6px;
+    color: #3c009d;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+}
+
+/* This makes the menu items look cool when you hover or click them */
+.menuItem:hover,
+.menuItem.active {
+    background-color: #3c009d;
+    color: white;
+    box-shadow: 0 4px 6px rgba(60, 0, 157, 0.3);
+}
+
+/* This puts some space above the logout button */
+.logoutItem {
+    margin-top: 15px;
+}
+
+/* This makes the logout button look scary */
+.logoutBtn {
+    width: 100%;
+    padding: 10px 15px;
+    background: #c52424;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* This makes the logout button look even scarier when you hover over it */
+.logoutBtn:hover {
+    background: #a41f1f;
+    font-size: 20px;
+    padding: 12px 17px;
+    font-weight: bold;
+}
+
+/* This is for the buttons to make payments */
+.paymentButtons {
+    display: flex;
+    gap: 15px;
+    padding-right: 25px;
+    margin-bottom: 15px;
+}
+
+/* This is what each payment button looks like */
+.paymentBtn {
+    flex: 1;
+    padding: 12px 15px;
+    background: #4c00b4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* This creates a smooth hover effect */
+.paymentBtn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+/* This changes the color of the payment button when you hover over it */
+.paymentBtn:hover {
+    background: #3c009d;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.paymentBtn:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* This adds a subtle push effect when the button is clicked */
+.paymentBtn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* This makes the banking details and payment receipts look centered */
+.bankingDetails,
+.paymentReceipts {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    background: #eaeaea;
+    width: 100%;
+    text-align: center;
+    font-weight: 600;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+/* This makes the bank and card icons look nice */
+.bankIcon,
+.cardIcon {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+/* This is for the box that shows your account details */
+.accountDetails {
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+
+/* This puts some space between each line in the account details */
+.accountDetails div {
+    margin-bottom: 8px;
+}
+
+/* This makes important text in the account details stand out */
+.accountDetails span {
+    font-weight: 700;
+    color: #3c009d;
+}
+
+/* This is for the button that shows or hides your account number */
+.toggleAccountBtn {
+    margin-left: 8px;
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+/* This is for the box that shows your payment history */
+.paymentHistoryContainer {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 10px;
+    margin-right: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* This is for each payment receipt in your history */
+.paymentReceipt {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #eaeaea;
+    margin-bottom: 12px;
+    border-radius: 6px;
+}
+
+/* This organizes the information in each payment receipt */
+.paymentInfo {
+    display: flex;
+    gap: 15px;
+}
+
+/* This makes important information in the payment receipt stand out */
+.paymentDate,
+.paymentReference,
+.paymentTotal {
+    font-weight: 600;
+}
+
+/* This is for the button that lets you pay again */
+.payAgainBtn {
+    padding: 8px 15px;
+    font-size: 12px;
+}
+
+/* This changes the color of the "Pay Again" button when you hover over it */
+.payAgainBtn:hover {
+    background: #3c009d;
+    color: white;
+    font-weight: bolder;
+}
+
+/* This adds a border around each payment receipt */
+.paymentReceipt {
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+/* This makes validated payments have a green border */
+.paymentReceipt.validated {
+    border-color: green;
+}
+
+/* This makes non-validated payments have a red border */
+.paymentReceipt.not-validated {
+    border-color: red;
+}
+
+/* This makes the validation status text red and italic */
+.validationStatus {
+    color: red;
+    font-style: italic;
+}
+
+/* This is for the section that shows all your payments */
+.paymentsSection {
+    width: 100%;
+}
+
+/* This makes the "Payment Receipts" title look nice */
+.paymentsSection h2 {
+    color: #3c009d;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+/* This makes the account details and payment history boxes look nice */
+.accountDetails,
+.paymentHistoryContainer {
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    transform: translateY(0);
+}
+
+/* This makes the boxes look even nicer when you hover over them */
+.accountDetails:hover,
+.paymentHistoryContainer:hover {
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}

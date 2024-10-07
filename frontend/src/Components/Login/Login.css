@@ -1,0 +1,103 @@
+.loginHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.loginText {
+    color: #3c009d;
+    font-size: 42px;
+    font-weight: 700;
+}
+
+.loginUnderline {
+    width: 61px;
+    height: 6px;
+    background: #3C009D;
+    border-radius: 9px;
+}
+
+.loginContainer {
+    display: flex;
+    flex-direction: column;
+    width: 600px;
+    height: 500px;
+    margin: auto;
+    margin-top: 70px;
+    background: #fff;
+    margin-bottom: 50px;
+}
+
+.loginInputs {
+    margin-top: 55px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.loginInput {
+    padding-left: 30px;
+    padding-right: 10px;
+    display: flex;
+    align-items: center;
+    margin: auto;
+    width: 350px;
+    height: 50px;
+    background: #EAEAEA;
+    border-radius: 6px;
+}
+
+input img {
+    margin: 0 30px;
+}
+
+.loginInput input {
+    height: 50px;
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #797979;
+    font-size: 14px;
+    padding-left: 15px;
+}
+
+.loginSubmit-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 60px;
+}
+
+.loginSubmit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 47px;
+    color: #fff;
+    background: #4C00B4;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.error-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #c52424;
+}
+
+.success-message {
+    display: flex;
+    justify-content: center;
+    color: #4fc23e;
+}
+
+
