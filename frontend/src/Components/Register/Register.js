@@ -84,7 +84,7 @@ const Register = () => {
                     <img src={pencil_icon} alt="" />
                     <input
                         type="text"
-                        placeholder="   First Name"
+                        placeholder="First Name"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                     />
@@ -94,7 +94,7 @@ const Register = () => {
                     <img src={pencil_icon} alt=""/>
                     <input
                         type="text"
-                        placeholder="   Last Name"
+                        placeholder="Last Name"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                     />
@@ -104,7 +104,7 @@ const Register = () => {
                     <img src={user_icon} alt="" />
                     <input
                         type="username"
-                        placeholder="   Username"
+                        placeholder="Username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
@@ -114,7 +114,7 @@ const Register = () => {
                     <img src={email_icon} alt="" />
                     <input
                         type="email"
-                        placeholder="   Email"
+                        placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
@@ -124,7 +124,7 @@ const Register = () => {
                     <img src={user_icon} alt="" />
                     <input
                         type="text"
-                        placeholder="   ID Number"
+                        placeholder="ID Number"
                         value={idNumber}
                         onChange={(e) => setIdNumber(e.target.value)}
                     />
@@ -134,7 +134,7 @@ const Register = () => {
                     <img src={card_icon} alt="" />
                     <input
                         type="text"
-                        placeholder="   Account Number"
+                        placeholder="Account Number"
                         value={accountNumber}
                         onChange={(e) => setAccountNumber(e.target.value)}
                     />
@@ -145,7 +145,7 @@ const Register = () => {
                     {/* Implementing password visibility */}
                     <input
                         type={showPassword ? "text" : "password"}
-                        placeholder="   Password"
+                        placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
@@ -161,7 +161,7 @@ const Register = () => {
                     {/* Implementing password visibility */}
                     <input
                         type={showConfirmPassword ? "text" : "password"}
-                        placeholder="   Confirm Password"
+                        placeholder="Confirm Password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                     />
