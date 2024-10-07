@@ -1,7 +1,6 @@
 import https from 'https';
 import fs from 'fs';
 import connectToDatabase from './db/conn.mjs'; // import the singleton
-import chalk from 'chalk';
 import app from './app.mjs';
 
 // get backend port
@@ -24,14 +23,14 @@ const startServer = async () => {
 
     //check if connection is successful or not
     if (dbInstance) {
-      console.log(chalk.green("Database connected successfully"));
+      console.log("Database connected successfully");
 
       server.listen(PORT, () => {
-        console.log(chalk.blue(chalk.yellow(`Server is running on `), `https://localhost:${PORT}`));
+        console.log(`Server is running on : https://localhost:${PORT}`);
       });
   }
   } catch (error) {
-    console.error(chalk.white(chalk.red("Error connecting to the database:"), error));
+    console.error("Error connecting to the database : ", error);
   }
 }
 
@@ -40,6 +39,6 @@ const startServer = async () => {
   try {
     await startServer(); // wait for server to start
   } catch(error) {
-    console.error(chalk.white(chalk.red("Error starting server:"), error.message));
+    console.error("Error starting server : ", error.message);
   }
 })();
