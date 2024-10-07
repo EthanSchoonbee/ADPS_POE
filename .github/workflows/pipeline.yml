@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - dev  # Triggers on pushes to the 'main' branch
+      - dev  # Triggers on pushes to the 'dev' branch
 
 jobs:
   # Backend Build and Test
@@ -15,7 +15,6 @@ jobs:
         image: mongo:latest
         ports:
           - 27017:27017
-        options: --bind_ip_all
 
     steps:
       - name: Checkout code
