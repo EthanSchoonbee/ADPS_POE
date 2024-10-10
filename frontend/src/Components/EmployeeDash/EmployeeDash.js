@@ -8,6 +8,7 @@ import AllPayments from "./AllPayments.js";
 import VerifiedPayments from "./VerifiedPayments";
 import UnverifiedPayments from "./UnverifiedPayments";
 import VerifyPayment from "./VerifyPayment";
+import {jwtDecode} from "jwt-decode";
 
 //The entire employee dashboard component
 const EmployeeDash = () => {
@@ -22,6 +23,8 @@ const EmployeeDash = () => {
     const [users, setUsers] = useState({});
     const navigate = useNavigate();
 
+    const [authError, setAuthError] = useState(null);
+
     //use effect to hook into the component lifecycle
     useEffect(() => {
         //getting the token from the local storage
@@ -32,10 +35,26 @@ const EmployeeDash = () => {
             handleLogout();
             //else will perform necessary starting actions
         } else {
-            //will fetch the employee information
-            fetchEmployeeInfo();
-            //will fetch the payment information of all the payments that have been made on the system
-            fetchPayments();
+
+            try{
+                const decodedToken = jwtDecode(token);
+                if(decodedToken.role !== "employee"){
+                    setAuthError("You don't have permission to access this page.");
+                    setTimeout(() =>{
+                        navigate("/Dashboard");
+                    }, 3000)//Redirect after 3 seconds
+                }else{
+                    //will fetch the employee information
+                    fetchEmployeeInfo();
+                    //will fetch the payment information of all the payments that have been made on the system
+                    fetchPayments();
+                }
+            }
+            catch(error){
+                console.error("Error decoding token:", error);
+                navigate("/");
+            }
+
         }
     }, []);
 
@@ -207,68 +226,80 @@ const EmployeeDash = () => {
     return (
         //the main container for the employee dashboard
         <div className="employee-dashboard-container">
-            {/*The employee dash*/}
-            <div className="employee-dashboard">
-                {/*The sidebar for the menu*/}
-                <div className="sidebar">
-                    {/*if there is employee info then will say welcome and the username*/}
-                    {employeeInfo && <h2>Welcome, {employeeInfo.username}</h2>}
-                    {/*All the menu items on the sidebar*/}
-                    <div className="menu-items">
-                        {/*setting the active section for the menu to all payments section. */}
-                        <button
-                            className={activeSection === "all" ? "active" : ""}
-                            onClick={() =>
-                                setActiveSection("all")
-                            } /*on click will set the active section to all*/
-                        >
-                            All Payments
-                        </button>
-                        {/*setting the active section for the menu to unverified payments section. */}
-                        <button
-                            className={activeSection === "unverified" ? "active" : ""}
-                            onClick={() => setActiveSection("unverified")}
-                        >
-                            Unverified Payments
-                        </button>
-                        {/*setting the active section for the menu to verified payments section. */}
-                        <button
-                            className={activeSection === "verified" ? "active" : ""}
-                            onClick={() => setActiveSection("verified")}
-                        >
-                            Verified Payments
-                        </button>
-                    </div>
-                    {/*The logout button*/}
-                    <button className="logout-btn" onClick={handleLogout}>
-                        Logout
-                    </button>
-                </div>
-                {/*The main content for the dashboard*/}
-                <div className="main-content">
-                    {/*if loading is true then will display the loading screen*/}
-                    {loading ? (
-                        //the loading screen. using the loading-payment style
-                        <div className="loading-payment">
-                            {/*loading payments*/}
-                            <p>Loading Payments...</p>
-                            {/*loading animation ring*/}
-                            <div className="lds-ring">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
+            {authError? (
+              <div className="error-container">
+                  <div className="errorMessage">
+                      <h2>Access Denied</h2>
+                      <p className="flash">{authError}</p>
+                      <p className="flash">Redirecting you to the Customer Dashboard...</p>
+                  </div>
+              </div>
+            ) : (
+                <>
+                    {/*The employee dash*/}
+                    <div className="employee-dashboard">
+                    {/*The sidebar for the menu*/}
+                        <div className="sidebar">
+                            {/*if there is employee info then will say welcome and the username*/}
+                            {employeeInfo && <h2>Welcome, {employeeInfo.username}</h2>}
+                            {/*All the menu items on the sidebar*/}
+                            <div className="menu-items">
+                                {/*setting the active section for the menu to all payments section. */}
+                                <button
+                                    className={activeSection === "all" ? "active" : ""}
+                                    onClick={() =>
+                                        setActiveSection("all")
+                                    } /*on click will set the active section to all*/
+                                >
+                                    All Payments
+                                </button>
+                                {/*setting the active section for the menu to unverified payments section. */}
+                                <button
+                                    className={activeSection === "unverified" ? "active" : ""}
+                                    onClick={() => setActiveSection("unverified")}
+                                >
+                                    Unverified Payments
+                                </button>
+                                {/*setting the active section for the menu to verified payments section. */}
+                                <button
+                                    className={activeSection === "verified" ? "active" : ""}
+                                    onClick={() => setActiveSection("verified")}
+                                >
+                                    Verified Payments
+                                </button>
                             </div>
+                            {/*The logout button*/}
+                            <button className="logout-btn" onClick={handleLogout}>
+                                Logout
+                            </button>
                         </div>
-                    ) : error ? (
-                        //if there is an error then will display the error message
-                        <p className="error-message">{error}</p>
-                    ) : (
-                        //else will render all the content(ie the payments)
-                        renderContent()
-                    )}
-                </div>
-            </div>
+                        {/*The main content for the dashboard*/}
+                        <div className="main-content">
+                            {/*if loading is true then will display the loading screen*/}
+                            {loading ? (
+                                //the loading screen. using the loading-payment style
+                                <div className="loading-payment">
+                                    {/*loading payments*/}
+                                    <p>Loading Payments...</p>
+                                    {/*loading animation ring*/}
+                                    <div className="lds-ring">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            ) : error ? (
+                                //if there is an error then will display the error message
+                                <p className="error-message">{error}</p>
+                            ) : (
+                                //else will render all the content(ie the payments)
+                                renderContent()
+                            )}
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 };
