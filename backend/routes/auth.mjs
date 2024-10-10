@@ -382,4 +382,45 @@ router.get(
     })
 );
 
+//getting the users name and surname from the user id
+router.get(
+    "/user/:id",
+    auth,
+    asyncHandler(async (req, res) => {
+        console.log("Fetching user information for user ID:", req.params.id);
+
+        try {
+            //getting the user collection reference
+            const userCollection = req.db.collection("users");
+            //finding the user in the database and excluding the password field
+            const user = await userCollection.findOne(
+                { _id: new mongoose.Types.ObjectId(req.params.id) },
+                { projection: { firstname: 1, lastname: 1 } }
+            );
+
+            //if there is no user found then send an error message
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+
+            //sending the user information to the frontend
+            res.status(200).json({
+                user: {
+                    id: user._id,
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                },
+            });
+        } catch (error) {
+            //if there is an error. log the error
+            console.error(
+                "Error fetching user information:",
+                error,
+                "Failed to fetch user information"
+            );
+            res.status(500).json({ error: "Internal server error" });
+        }
+    })
+);
+
 export default router;
