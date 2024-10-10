@@ -37,17 +37,30 @@ const AllPayments = ({ payments }) => {
                 </div>
             </div>
             <div className="payments-list">
-                {filteredPayments.map((payment) => (
-                    <div key={payment._id} className="payment-receipt">
-                        <p>Date: {new Date(payment.createdAt).toLocaleDateString()}</p>
-                        <p>Sender: {payment.senderName}</p>
-                        <p>Recipient: {payment.recipientName}</p>
-                        <p>
-                            Amount: {payment.currency} {payment.amount.toFixed(2)}
-                        </p>
-                        <p>Status: {payment.isValidated ? "Verified" : "Unverified"}</p>
+                {filteredPayments.length > 0 ?(
+                    filteredPayments.map((payment) => (
+                        //the payment receipt div
+                            <div key={payment._id} className="payment-receipt">
+                                <p>Sender: {payment.senderName}</p>
+                                <p>Recipient: {payment.recipientName}</p>
+                                <p>Date: {new Date(payment.createdAt).toLocaleDateString()}</p>
+                                <p>
+                                    Amount: {payment.currency} {payment.amount.toFixed(2)}
+                                </p>
+                                <p>Status: {payment.isValidated ? "Verified" : "Unverified"}</p>
+                            </div>
+                        ))
+                ): (
+                    //if no payments are found, will display a message
+                    <div className="no-payments-message">
+                        {/*if the filter is all then*/}
+                        {filter === "all"
+                            //will display no payments found meaning there are neither verified nor unverified payments
+                            ? "No payments found."
+                            //else will specify which type of payment is not found
+                            : `No ${filter} payments found.`}
                     </div>
-                ))}
+                )}
             </div>
         </div>
     );

@@ -11,7 +11,7 @@ const VerifiedPayments = ({ payments }) => {
             {/*Payments list class*/}
             <div className="payments-list">
                 {verifiedPayments.length === 0 && (
-                    <p>No Verified Payments Available</p>
+                    <p className="no-payments-message">No Verified Payments Available</p>
                 )}
                 {/*mapping the verified payments of type payment and displaying it in a list format*/}
                 {verifiedPayments.map((payment) => (

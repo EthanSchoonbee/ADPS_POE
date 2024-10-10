@@ -4,9 +4,6 @@ const UnverifiedPayments = ({ payments, onSelectPayment }) => {
     // Filter out the payments that have not been validated
     const unverifiedPayments = payments.filter((payment) => !payment.isValidated);
 
-    //set the payments to an array of elements
-
-
     // Will display the unverified payments in a list
     return (
         <div>
@@ -15,7 +12,7 @@ const UnverifiedPayments = ({ payments, onSelectPayment }) => {
             {/*the payments list*/}
             <div className="payments-list">
                 {unverifiedPayments.length === 0 && (
-                    <p>No Unverified Payments Available</p>
+                    <p className="no-payments-message">No Unverified Payments Available</p>
                 )}
                 {/*mapping the unverified payments of type payment*/}
                 {unverifiedPayments.map((payment) => (
