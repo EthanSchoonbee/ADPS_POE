@@ -1,0 +1,69 @@
+/*This is the payments list container*/
+.all-payments-container {
+    padding: 20px;
+}
+
+/*Header menu*/
+.header-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;/*align items to the center*/
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #007bff;/*border line for the bottom of the header menu*/
+}
+
+/*Header menu h1*/
+.header-menu h1 {
+    margin: 0 0 15px 0;/*margin for the h1 set to center*/
+    color: #007bff;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/*Consistent button style for the filter buttons*/
+.filter-buttons button {
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/*Hover effect for the filter buttons*/
+.filter-buttons button:hover {
+    background-color: #e2e6ea;
+}
+
+/*Active button style for the filter buttons*/
+.filter-buttons button.active {
+    background-color: #007bff;/*same as border for button*/
+    color: white;/*text colour set to white*/
+    font-weight: bold;/*bold text*/
+}
+
+/*Payment list container*/
+.payments-list {
+    display: grid;/*Display set to grid*/
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));/*grid template columns will fill the container*/
+    gap: 20px;
+}
+
+/*Payment receipt container*/
+.payment-receipt {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;/*border set to 1px solid #dee2e6*/
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);/*3d shadow effect*/
+}
+
+/*Payment receipt paragraph tag*/
+.payment-receipt p {
+    margin: 5px 0;
+}

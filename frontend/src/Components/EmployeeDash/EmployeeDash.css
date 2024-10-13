@@ -1,0 +1,184 @@
+/*main employee dashboard*/
+.employee-dashboard-container {
+    display: flex; /*flex container putting values in a row*/
+    justify-content: center;/*centering the content horizontally*/
+    align-items: center;/*centering the content vertically*/
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    padding: 20px;/*padding around the content*/
+}
+/*employee dashboard*/
+.employee-dashboard {
+    display: flex;
+    width: 100%;/*full width set to 100%*/
+    max-width: 1200px;/*max width set to 1200px*/
+    height: 85vh;/*height set to 80vh*/
+    background-color: #ffffff;
+    border-radius: 15px;/*border radius set to 15px*/
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);/*box shadow effect giving it a 3d kind of effect*/
+    overflow: hidden;/*if content is overflown then will be hidden*/
+}
+/*sidebar for the menu items*/
+.sidebar {
+    width: 250px;
+    background-color: #3c009d;/*background colour set to #3c009d (kind of purple)*/
+    padding: 20px;/*padding around the content*/
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+/*heading 2 for the sidebar*/
+.sidebar h2 {
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+/*menu items for the sidebar*/
+.menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: auto;
+}
+/*menu items button for the sidebar*/
+.menu-items button {
+    padding: 10px;
+    background-color: transparent;/*background colour set to transparent*/
+    border: none;
+    border-radius: 5px;
+    color: white;/*text colour set to white*/
+    cursor: pointer;/*cursor set to pointer*/
+    transition: background-color 0.3s;/*transition effect for background colour*/
+    text-align: left;
+}
+/*menu items button active and hover effect*/
+.menu-items button.active,
+.menu-items button:hover {
+    background-color: rgba(255, 255, 255, 0.2);/*background colour set to white with 0.2 opacity*/
+}
+
+/*logout button*/
+.logout-btn {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #c52424;/*background colour set to #c52424*/
+    color: white;/*text colour set to white*/
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/*logout button hover effect*/
+.logout-btn:hover {
+    background-color: #a41f1f;/*background colour set to #a41f1f. darker*/
+}
+
+/*main content*/
+.main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/*main content heading 1*/
+.main-content h1 {
+    margin-bottom: 20px;
+    color: #3c009d;
+}
+
+/*this is the css for the all payments container*/
+
+/*all payments container*/
+.payments-list {
+    display: grid;/*display set to grid*/
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));/*grid template columns set to repeat(auto-fill, minmax(300px, 1fr))*/
+    gap: 20px;
+}
+
+/*payment receipt*/
+.payment-receipt {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/*Verify payment receipt button*/
+.payment-receipt button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/*When hovering over receipt button*/
+.payment-receipt button:hover {
+    background-color: #45a049;/*background colour set to #45a049*/
+}
+
+/*error message*/
+.error-message {
+    color: red;
+    margin-bottom: 10px;
+}
+
+/*create a loading payment style that will have a loading animation*/
+.loading-payment {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+/*loading animation*/
+.loading-payment .lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+/*loading payment animation for div*/
+.loading-payment .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid #3c009d;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;/*will rotate infinitely*/
+    border-color: #3c009d transparent transparent transparent;/*border colour set to #3c009d, transparent, transparent, transparent*/
+}
+
+/*Loading animation delays for the ring
+
+/*loading animation delay*/
+.loading-payment .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+}
+
+/*loading animation delay*/
+.loading-payment .lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+}
+
+/*loading animation delay*/
+.loading-payment .lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+}
+
+/*loading animation keyframes*/
+@keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);/*rotate 0 degrees*/
+    }
+    100% {
+        transform: rotate(360deg);/*rotate 360 degrees*/
+    }
+}
