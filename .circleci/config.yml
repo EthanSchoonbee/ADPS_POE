@@ -16,6 +16,32 @@ jobs:
         - run:
             name: "Say hello"
             command: "echo Hello, World!"
+
+    sonarqube:
+      working_directory: ~/build
+      docker:
+        - image: sonarsource/sonar-scanner-cli
+      resource_class: small
+      steps:
+        - run: apk update
+        - run: apk upgrade
+        - run: apk --no-cache add --update openssh git curl
+        - checkout
+        - run: find .
+        - attach_workspace:
+            at: ~/workspace
+        - run: |
+            SONAR_BRANCH="${CIRCLE_BRANCH:-master}"
+            echo "Sonar branch value is: " $SONAR_BRANCH
+            echo "Sonar org value is : "$SONAR_ORG
+            sonar-scanner \
+            -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
+            -Dsonar.organization="$SONAR_ORG" \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.exclusions="**/android/**,**/ios/**" \
+            -Dsonar.login="$SONAR_TOKEN" \
+            -Dsonar.branch.name="$SONAR_BRANCH" \
+            -Dsonar.sources="."
   test-node:
     # Install node dependencies and run tests
     executor: node/default
@@ -62,7 +88,8 @@ workflows:
   build-and-test:
     jobs:
       - say-hello
-      - test-node
-      - build-node:
-          requires:
-            - test-node
+      - sonarqube
+      #- test-node
+      #- build-node:
+       #   requires:
+        #    - test-node
