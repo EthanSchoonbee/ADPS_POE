@@ -18,38 +18,54 @@ jobs:
     resource_class: small
     steps:
       - run:
-        name: Install JDK 17
-        command: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk
-      - run: java -version
-      - run: rm -rf ~/build/repo || true
-      - run: mkdir -p ~/build/repo
+          name: Install JDK 17
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y openjdk-17-jdk
+      - run:
+          name: Verify Java Installation
+          command: java -version
+      - run:
+          name: Cleanup build directory
+          command: rm -rf ~/build/repo || true
+      - run:
+          name: Create build directory
+          command: mkdir -p ~/build/repo
       - checkout:
           path: ~/build/repo
-      - run: curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
-      - run: unzip sonar-scanner.zip
-      - run: mv sonar-scanner-4.7.0.2747-linux sonar-scanner
+      - run:
+          name: Download Sonar Scanner
+          command: curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+      - run:
+          name: Unzip Sonar Scanner
+          command: unzip sonar-scanner.zip
+      - run:
+          name: Move Sonar Scanner
+          command: mv sonar-scanner-4.7.0.2747-linux sonar-scanner
       - run:
           name: Add sonar-scanner to PATH
           command: |
             echo 'export PATH="$PATH:$(pwd)/sonar-scanner/bin"' >> $BASH_ENV
             source $BASH_ENV
-      - run: find .
+      - run:
+          name: Find files in current directory
+          command: find .
       - attach_workspace:
           at: ~/workspace
-      - run: |
-          SONAR_BRANCH="${CIRCLE_BRANCH:-master}"
-          echo "Sonar branch value is: " $SONAR_BRANCH
-          echo "Sonar org value is : "$SONAR_ORG
-          sonar-scanner \
-          -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
-          -Dsonar.organization="$SONAR_ORG" \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.exclusions="**/android/**,**/ios/**" \
-          -Dsonar.login="$SONAR_TOKEN" \
-          -Dsonar.branch.name="$SONAR_BRANCH" \
-          -Dsonar.sources="."
+      - run:
+          name: Run Sonar Scanner
+          command: |
+            SONAR_BRANCH="${CIRCLE_BRANCH:-master}"
+            echo "Sonar branch value is: " $SONAR_BRANCH
+            echo "Sonar org value is : "$SONAR_ORG
+            sonar-scanner \
+            -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
+            -Dsonar.organization="$SONAR_ORG" \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.exclusions="**/android/**,**/ios/**" \
+            -Dsonar.login="$SONAR_TOKEN" \
+            -Dsonar.branch.name="$SONAR_BRANCH" \
+            -Dsonar.sources="."
 
   test-node:
     executor: node/default
