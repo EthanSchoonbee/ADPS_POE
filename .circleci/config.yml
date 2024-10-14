@@ -90,6 +90,7 @@ workflows:
       - build-node:
           requires:
             - test-node
+      - sonarqube
     # - deploy:
     #     requires:
     #       - build-node
