@@ -10,10 +10,14 @@ jobs:
     resource_class: small
     steps:
       - run:
+          name: Check Current Java Version
+          command: |
+              java -version
+      - run:
           name: Remove Older Java Versions
           command: |
-            sudo apt-get remove --purge openjdk-11-jdk
-            sudo apt-get autoremove
+            sudo apt-get remove --purge openjdk-11-jdk || true
+            sudo apt-get autoremove || true
       - run:
           name: Install JDK 17
           command: |
