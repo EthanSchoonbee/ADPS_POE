@@ -17,6 +17,10 @@ jobs:
       - image: sonarsource/sonar-scanner-cli
     resource_class: small
     steps:
+      - run: apt-get update && apt-get install -y findutils
+      - run: apt-get update
+      - run: apt-get upgrade
+      - run: apt-get --no-cache add --update openssh git curl
       - checkout
       - run: find .
       - attach_workspace:
