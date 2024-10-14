@@ -14,13 +14,13 @@ jobs:
   sonarqube:
     working_directory: ~/build
     docker:
-      - image: sonarsource/sonar-scanner-cli
+      - image: cimg/node:18.17
     resource_class: small
     steps:
-      - run: apt-get update && apt-get install -y findutils
-      - run: apt-get update
-      - run: apt-get upgrade
-      - run: apt-get --no-cache add --update openssh git curl
+      - run: curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+      - run: unzip sonar-scanner.zip
+      - run: mv sonar-scanner-4.7.0.2747-linux sonar-scanner
+      - run: export PATH="$PATH:$(pwd)/sonar-scanner/bin"
       - checkout
       - run: find .
       - attach_workspace:
