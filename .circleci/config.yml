@@ -31,8 +31,10 @@ jobs:
           path: ~/project
       - node/install-packages:
           pkg-manager: npm
-      - run:
-          command: npm run build
+       run:
+          name: Build project
+          command: |
+            CI=false npm run build
       - run:
           name: Create the ~/artifacts directory if it doesn't exist
           command: mkdir -p ~/artifacts
