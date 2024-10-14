@@ -1,5 +1,3 @@
-# This config was automatically generated from your source code
-# Stacks detected: cicd:github-actions:.github/workflows,deps:node:frontend,test:jest:
 version: 2.1
 orbs:
   node: circleci/node@5
@@ -38,9 +36,8 @@ jobs:
           -Dsonar.login="$SONAR_TOKEN" \
           -Dsonar.branch.name="$SONAR_BRANCH" \
           -Dsonar.sources="."
-          
-test-node:
-    # Install node dependencies and run tests
+
+  test-node:
     executor: node/default
     working_directory: ~/project/frontend
     environment:
@@ -57,9 +54,8 @@ test-node:
           command: npm run test --ci --runInBand --reporters=default --reporters=jest-junit
       - store_test_results:
           path: ./test-results/
-          
+
   build-node:
-    # Build node project
     executor: node/default
     working_directory: ~/project/frontend
     steps:
@@ -74,7 +70,6 @@ test-node:
       - run:
           name: Create the ~/artifacts directory if it doesn't exist
           command: mkdir -p ~/artifacts
-      # Copy output to artifacts dir
       - run:
           name: Copy artifacts
           command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
@@ -82,13 +77,11 @@ test-node:
           path: ~/artifacts
           destination: node-build
 
-          
-
 workflows:
   build-and-test:
     jobs:
       - say-hello
-      #- sonarqube
+      # - sonarqube
       - test-node
       - build-node:
           requires:
