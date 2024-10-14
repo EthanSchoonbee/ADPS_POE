@@ -38,13 +38,58 @@ jobs:
           -Dsonar.login="$SONAR_TOKEN" \
           -Dsonar.branch.name="$SONAR_BRANCH" \
           -Dsonar.sources="."
+          
+test-node:
+    # Install node dependencies and run tests
+    executor: node/default
+    working_directory: ~/project/frontend
+    environment:
+      JEST_JUNIT_OUTPUT_DIR: ./test-results/
+    steps:
+      - checkout:
+          path: ~/project
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          command: npm install jest-junit
+      - run:
+          name: Run tests
+          command: npm run test --ci --runInBand --reporters=default --reporters=jest-junit
+      - store_test_results:
+          path: ./test-results/
+          
+  build-node:
+    # Build node project
+    executor: node/default
+    working_directory: ~/project/frontend
+    steps:
+      - checkout:
+          path: ~/project
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Build project
+          command: |
+            CI=false npm run build
+      - run:
+          name: Create the ~/artifacts directory if it doesn't exist
+          command: mkdir -p ~/artifacts
+      # Copy output to artifacts dir
+      - run:
+          name: Copy artifacts
+          command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
+      - store_artifacts:
+          path: ~/artifacts
+          destination: node-build
+
+          
 
 workflows:
   build-and-test:
     jobs:
       - say-hello
       #- sonarqube
-      #- test-node
-      #- build-node:
-       #   requires:
-        #    - test-node
+      - test-node
+      - build-node:
+          requires:
+            - test-node
