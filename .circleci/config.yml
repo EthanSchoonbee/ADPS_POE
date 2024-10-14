@@ -10,6 +10,11 @@ jobs:
     resource_class: small
     steps:
       - run:
+          name: Remove Older Java Versions
+          command: |
+            sudo apt-get remove --purge openjdk-11-jdk
+            sudo apt-get autoremove
+      - run:
           name: Install JDK 17
           command: |
             sudo apt-get update
@@ -52,6 +57,11 @@ jobs:
           command: find .
       - attach_workspace:
           at: ~/workspace
+      - run:
+          name: Verify Java Running Version
+          command: |
+              java -version
+              echo $JAVA_HOME
       - run:
           name: Run Sonar Scanner
           command: |
