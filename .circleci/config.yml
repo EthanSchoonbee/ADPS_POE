@@ -14,9 +14,15 @@ jobs:
   sonarqube:
     working_directory: ~/build
     docker:
-      - image: cimg/node:18.17-jdk17
+      - image: cimg/node:18.17
     resource_class: small
     steps:
+      - run:
+        name: Install JDK 17
+        command: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-17-jdk
+      - run: java -version
       - run: rm -rf ~/build/repo || true
       - run: mkdir -p ~/build/repo
       - checkout:
