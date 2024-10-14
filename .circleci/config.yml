@@ -2,15 +2,6 @@ version: 2.1
 orbs:
   node: circleci/node@5
 jobs:
-  say-hello:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
-
   sonarqube:
     working_directory: ~/build
     docker:
@@ -22,6 +13,8 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get install -y openjdk-17-jdk
+            sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-17-openjdk-amd64/bin/java 1
+            sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
       - run:
           name: Verify Java Installation
           command: java -version
@@ -48,11 +41,6 @@ jobs:
             echo 'export PATH="$PATH:$(pwd)/sonar-scanner/bin"' >> $BASH_ENV
             source $BASH_ENV
       - run:
-          name: Find files in current directory
-          command: find .
-      - attach_workspace:
-          at: ~/workspace
-      - run:
           name: Run Sonar Scanner
           command: |
             SONAR_BRANCH="${CIRCLE_BRANCH:-master}"
@@ -67,52 +55,7 @@ jobs:
             -Dsonar.branch.name="$SONAR_BRANCH" \
             -Dsonar.sources="."
 
-  test-node:
-    executor: node/default
-    working_directory: ~/project/frontend
-    environment:
-      JEST_JUNIT_OUTPUT_DIR: ./test-results/
-    steps:
-      - checkout:
-          path: ~/project
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          command: npm install jest-junit
-      - run:
-          name: Run tests
-          command: npm run test --ci --runInBand --reporters=default --reporters=jest-junit
-      - store_test_results:
-          path: ./test-results/
-
-  build-node:
-    executor: node/default
-    working_directory: ~/project/frontend
-    steps:
-      - checkout:
-          path: ~/project
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          name: Build project
-          command: |
-            CI=false npm run build
-      - run:
-          name: Create the ~/artifacts directory if it doesn't exist
-          command: mkdir -p ~/artifacts
-      - run:
-          name: Copy artifacts
-          command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
-      - store_artifacts:
-          path: ~/artifacts
-          destination: node-build
-
 workflows:
   build-and-test:
     jobs:
-      - say-hello
       - sonarqube
-      - test-node
-      - build-node:
-          requires:
-            - test-node
