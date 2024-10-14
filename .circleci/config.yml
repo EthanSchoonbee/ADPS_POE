@@ -4,6 +4,18 @@ version: 2.1
 orbs:
   node: circleci/node@5
 jobs:
+  say-hello:
+      # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
+      # See: https://circleci.com/docs/configuration-reference/#executor-job
+      docker:
+        - image: cimg/base:stable
+      # Add steps to the job
+      # See: https://circleci.com/docs/configuration-reference/#steps
+      steps:
+        - checkout
+        - run:
+            name: "Say hello"
+            command: "echo Hello, World!"
   test-node:
     # Install node dependencies and run tests
     executor: node/default
@@ -46,25 +58,11 @@ jobs:
           path: ~/artifacts
           destination: node-build
           
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
-    steps:
-      # Replace this with steps to deploy to users
-      - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
-      - run:
-          name: found github actions config
-          command: ':'
 workflows:
   build-and-test:
     jobs:
+      - say-hello
       - test-node
       - build-node:
           requires:
             - test-node
-    # - deploy:
-    #     requires:
-    #       - build-node
