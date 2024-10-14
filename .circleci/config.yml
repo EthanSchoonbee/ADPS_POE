@@ -14,7 +14,7 @@ jobs:
   sonarqube:
     working_directory: ~/build
     docker:
-      - image: cimg/node:18.17
+      - image: cimg/node:18.17-jdk17
     resource_class: small
     steps:
       - run: rm -rf ~/build/repo || true
