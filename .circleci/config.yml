@@ -24,7 +24,11 @@ jobs:
       - run: curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
       - run: unzip sonar-scanner.zip
       - run: mv sonar-scanner-4.7.0.2747-linux sonar-scanner
-      - run: export PATH="$PATH:$(pwd)/sonar-scanner/bin"
+      - run:
+          name: Add sonar-scanner to PATH
+          command: |
+            echo 'export PATH="$PATH:$(pwd)/sonar-scanner/bin"' >> $BASH_ENV
+            source $BASH_ENV
       - run: find .
       - attach_workspace:
           at: ~/workspace
