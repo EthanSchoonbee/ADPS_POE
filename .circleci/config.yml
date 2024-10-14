@@ -81,7 +81,7 @@ workflows:
   build-and-test:
     jobs:
       - say-hello
-      # - sonarqube
+      - sonarqube
       - test-node
       - build-node:
           requires:
