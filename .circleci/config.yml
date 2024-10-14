@@ -31,7 +31,7 @@ jobs:
           path: ~/project
       - node/install-packages:
           pkg-manager: npm
-       run:
+      - run:
           name: Build project
           command: |
             CI=false npm run build
