@@ -33,6 +33,10 @@ jobs:
           command: ls ~/build/repo/coverage
       - store_test_results:
           path: ./test-results/
+      - persist_to_workspace:
+          root: ~/build/repo
+          paths:
+            - coverage
 
   build-node:
     executor: node/default
@@ -96,6 +100,8 @@ jobs:
             source $BASH_ENV
             java -version
             echo $JAVA_HOME
+      - attach_workspace:
+          at: /home/circleci/build/repo
       - run:
           name: Check if lcov.info exists
           command: ls -l ~/build/repo/coverage/lcov.info || echo "lcov.info not found"
