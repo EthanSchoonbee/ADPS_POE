@@ -123,8 +123,7 @@ jobs:
             -Dsonar.exclusions="**/android/**,**/ios/**" \
             -Dsonar.login="$SONAR_TOKEN" \
             -Dsonar.branch.name="${CIRCLE_BRANCH:-master}" \
-            -Dsonar.sources="./src" \
-            -Dsonar.tests="./tests" \
+            -Dsonar.sources="." \
             -Dsonar.javascript.lcov.reportPaths="/home/circleci/build/repo/coverage/lcov.info"
 
 workflows:
