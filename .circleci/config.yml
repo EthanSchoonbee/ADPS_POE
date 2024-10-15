@@ -26,7 +26,7 @@ jobs:
       - run:
           name: Update Sonar Scanner Properties
           command: |
-            echo 'sonar.java.home=/usr/local/jdk-17.0.12' >> sonar-scanner/conf/sonar-scanner.properties
+            echo 'sonar.java.home=/usr/local/jdk-17.0.12' >> ~/build/sonar-scanner/conf/sonar-scanner.properties
       - run:
           name: Add sonar-scanner to PATH
           command: |
