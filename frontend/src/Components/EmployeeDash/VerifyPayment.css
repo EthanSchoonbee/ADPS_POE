@@ -1,0 +1,167 @@
+/*Verify payment container*/
+.verify-payment {
+    background-color: #f8f9fa;
+    border: 2px solid #007bff;/*border set to 2px solid #007bff*/
+    border-radius: 15px;/*border radius set to 15px*/
+    padding: 30px;/*padding set to 30px*/
+    max-width: 800px;
+    margin: 40px auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);/*has a slight box shadow effect*/
+    position: relative;/*position set to relative*/
+}
+/*Verify payment container*/
+.verify-payment::before,
+.verify-payment::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #007bff;
+    border-radius: 50%;
+}
+
+/*Positioning the pseudo elements*/
+.verify-payment::before {
+    top: -10px;
+    left: -10px;
+}
+
+/*Positioning the pseudo elements*/
+.verify-payment::after {
+    bottom: -10px;
+    right: -10px;
+}
+
+/*Verify payment heading*/
+.verify-payment h2 {
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/*Payment details*/
+.payment-details {
+    display: grid;/*displays as grid*/
+    gap: 20px;
+}
+
+/*Field styling*/
+.field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);/*box shadow effect added*/
+}
+
+/*Field styling*/
+.field label {
+    font-weight: bold;
+    color: #333;/*text colour set to #333*/
+}
+
+/*Field styling*/
+.field span {
+    margin: 0 15px;
+    color: #555;/*text colour set to #555*/
+}
+
+/*button for the field*/
+.field button {
+    padding: 8px 15px;
+    border: 2px dotted #28a745;/*border set to 2px dotted #28a745*/
+    background-color: #e8f5e9;
+    color: #28a745;/*text colour set to #28a745*/
+    border-radius: 5px;/*border radius set to 5px*/
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/*when hovering over the button*/
+.field button:hover {
+    background-color: #c8e6c9;/*background colour set to #c8e6c9. a lighter shade*/
+}
+
+/*when the button is focused*/
+.field button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.5);/*box shadow effect added to allow the user to know which one is being focused on*/
+}
+
+/*when the button is verified*/
+.field button.verified {
+    background-color: #28a745;/*background colour set to #28a745*/
+    color: white;/*text colour set to white*/
+    border: 2px solid #28a745;/*border set to 2px solid #28a745*/
+    font-weight: bold;/*font weight set to bold*/
+}
+
+/*Error message*/
+.error-message {
+    color: #dc3545;
+    text-align: center;
+    margin-top: 15px;
+}
+
+/*Action buttons*/
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+/*consistent Styling for the buttons*/
+.action-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/*Focus effect for the buttons*/
+.action-buttons button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);/*box shadow effect added*/
+}
+
+/*Disabling the submit button until everything is verified*/
+.action-buttons button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;/*cursor set to not-allowed*/
+}
+
+/*Submit button styling*/
+.action-buttons button:first-child {
+    background-color: #28a745;
+    color: white;
+}
+
+/*Hover effect for the submit button*/
+.action-buttons button:first-child:hover {
+    background-color: #218838;
+}
+
+/*Reject button styling*/
+.action-buttons button:nth-child(2) {
+    background-color: #dc3545;
+    color: white;
+}
+
+/*Hover effect for the reject button*/
+.action-buttons button:nth-child(2):hover {
+    background-color: #c82333;
+}
+
+/*Cancel button styling*/
+.action-buttons button:last-child {
+    background-color: #6c757d;
+    color: white;
+}
+
+/*Hover effect for the cancel button*/
+.action-buttons button:last-child:hover {
+    background-color: #5a6268;
+}

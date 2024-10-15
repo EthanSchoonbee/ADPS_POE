@@ -161,5 +161,43 @@ router.get("/all-payments", auth, async (req, res) => {
     }
 });
 
+//Route for verifying the payment
+router.post("/verify-payment/:paymentId", auth,
+    async (req, res) => {
+        try {
+            // Check if the user is an employee
+            if (req.user.role !== "employee") {
+                return res.status(403).json({ message: "Access denied. Employee only." });
+            }
+
+            // Get the payment ID from the URL
+            const paymentId = req.params.paymentId;
+            // Log the payment ID
+            console.log("Attempting to verify payment:", paymentId);
+
+            //awaiting the payment to be found by the payment id
+            const payment = await Payment.findById(paymentId);
+            //if the payment is not found
+            if (!payment) {
+                //logging that the payment is not found
+                console.log("Payment not found:", paymentId);
+                return res.status(404).json({ message: "Payment not found" });
+            }
+
+            //else if the payment is found
+            //setting the payment to be validated
+            payment.isValidated = true;
+            await payment.save();//saving the payment
+
+            //logging that the payment has been verified
+            console.log("Payment verified successfully:", paymentId);
+            res.status(200).json({ message: "Payment verified successfully" });
+        } catch (error) {
+            console.error("Error verifying payment:", error);
+            res.status(500).json({ message: "Error verifying payment", error: error.message });
+        }
+    });
+
+
 //user payment implemented
 export default router;

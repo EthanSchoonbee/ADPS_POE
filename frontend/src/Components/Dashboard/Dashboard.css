@@ -4,6 +4,7 @@
     flex-direction: column;
     width: 100%;
     max-width: 1100px;
+    height: 90vh;
     margin: 40px auto;
     background: #fff;
     border-radius: 15px;
@@ -12,62 +13,7 @@
     position: relative;
 }
 
-/* error container for the error message */
-.error-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-0%, -50%);
-    z-index: 1000;
-}
-
-/*error message for the dashboard container*/
-.dashboardContainer .errorMessage{
-  background-color: white;
-    color: black;
-    padding: 20px 25px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    max-width: 500px;
-    width: 90%;
-    animation: fadeIn 0.5s ease-out forwards;
-}
-
-/*error message header*/
-.errorMessage h2{
-  color: red;
-    font-size:50px;
-    margin-bottom: 15px;
-}
-
-/*error for paragraph*/
-.errorMessage p{
-    font-size: 18px;
-    margin-bottom: 8px;
-    font-style: italic;
-    line-height: 1.5;
-}
-
-/*flashing animation for error message paragraph*/
-.errorMessage p.flash{
-  animation: flash 0.5s infinite;
-}
-
-/*flashing animation for error message paragraph*/
-@keyframes flash {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* This adds a cool colourful line at the top of the dashboard */
+/* This adds a cool colorful line at the top of the dashboard */
 .dashboardContainer::before {
     content: "";
     position: absolute;
@@ -112,6 +58,8 @@
     display: flex;
     width: 100%;
     padding: 15px;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
 }
 
 /* This splits the dashboard into two parts */
@@ -120,6 +68,7 @@
     justify-content: space-between;
     width: 100%;
     gap: 20px;
+    min-height: min-content;
 }
 
 /* This is the left side of the dashboard */
@@ -128,6 +77,11 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+    position: sticky;
+    top: 15px; /* Matches the padding of dashboardContent */
+    align-self: flex-start;
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
 }
 
 /* This is the right side of the dashboard */
@@ -136,6 +90,7 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+    overflow-y: auto;
 }
 
 /* This is where the customer's name goes */
@@ -231,7 +186,7 @@
 
 /* This creates a smooth hover effect */
 .paymentBtn::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -392,6 +347,7 @@
     margin-bottom: 15px;
     font-size: 20px;
 }
+
 /* This makes the account details and payment history boxes look nice */
 .accountDetails,
 .paymentHistoryContainer {
@@ -406,6 +362,18 @@
 .accountDetails:hover,
 .paymentHistoryContainer:hover {
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.error-message h2 {
+    color: #ff4d4d;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.error-message p {
+    font-size: 16px;
+    margin-bottom: 8px;
+    line-height: 1.5;
 }
 
 @keyframes fadeIn {

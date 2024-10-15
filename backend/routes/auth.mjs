@@ -9,6 +9,7 @@ import { auth } from "../middleware/authMiddleware.mjs"; // Make sure this impor
 import mongoose from "mongoose";
 // Add this import
 import securityMiddleware from "../middleware/securityMiddleware.mjs";
+import employee from "../models/Employee.mjs";
 
 // create an instance of the express router
 const router = express.Router();
@@ -329,6 +330,95 @@ router.get(
                 "Failed to fetch user information"
             );
             res.status(500).json({ error: "Internal server error" }); //Will send an error message to the frontend
+        }
+    })
+);
+
+//the router that is getting the employee information
+router.get(
+    "/employee",
+    //auth middleware to check if the user is authenticated
+    auth, asyncHandler(async (req, res) => {
+        //log that states that the employee information is being fetched
+        console.log("Fetching employee information for user ID:", req.user.id);
+
+        //try catch for any errors
+        try{
+            //declaring an employee collection that is using the database employees collection
+            const employeeCollection = req.db.collection("employees")
+            //getting the employee based on the user id found in the collection
+            const employee = await employeeCollection.findOne(
+                //finding the id that matches the user id in the request body and excluding the password field
+                //mongoose is used to create a new object id
+                { _id: new mongoose.Types.ObjectId(req.user.id) },
+                //projection is used to exclude things from the query
+                { projection: { password: 0 } }
+            )
+
+            //if the employee is not empty then send the user information
+            if (!employee) {
+                return res.status(404).json({ error: "Employee not found" });
+            }
+
+            //sending the employee information to the frontend
+            res.status(200).json({
+                employee: {
+                    id: employee.id, //the employee id
+                    email: employee.email, //the employee email
+                    username: employee.username,//the employee username,
+                    role: employee.role, //the employee role
+                },
+            });
+        }
+        catch(error){
+            //if the employee is not found then send an error message
+            console.error(
+                "Error fetching employee information:",
+                error,
+                "Failed to fetch employee information"
+            );
+            res.status(500).json({ error: "Internal server error" }); //Will send an error message to the frontend
+        }
+    })
+);
+
+//getting the users name and surname from the user id
+router.get(
+    "/user/:id",
+    auth,
+    asyncHandler(async (req, res) => {
+        console.log("Fetching user information for user ID:", req.params.id);
+
+        try {
+            //getting the user collection reference
+            const userCollection = req.db.collection("users");
+            //finding the user in the database and excluding the password field
+            const user = await userCollection.findOne(
+                { _id: new mongoose.Types.ObjectId(req.params.id) },
+                { projection: { firstname: 1, lastname: 1 } }
+            );
+
+            //if there is no user found then send an error message
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+
+            //sending the user information to the frontend
+            res.status(200).json({
+                user: {
+                    id: user._id,
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                },
+            });
+        } catch (error) {
+            //if there is an error. log the error
+            console.error(
+                "Error fetching user information:",
+                error,
+                "Failed to fetch user information"
+            );
+            res.status(500).json({ error: "Internal server error" });
         }
     })
 );
