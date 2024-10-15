@@ -21,6 +21,9 @@ jobs:
           name: Unzip Sonar Scanner
           command: unzip sonar-scanner.zip
       - run:
+          name: List Files
+          command: ls
+      - run:
           name: Move Sonar Scanner
           command: mv sonar-scanner-cli-5.0.1.3006-linux sonar-scanner
       - run:
