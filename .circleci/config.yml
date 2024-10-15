@@ -4,7 +4,7 @@ jobs:
   sonarqube:
     working_directory: ~/build
     docker:
-      - image: cimg/openjdk:17.0
+      - image: circleci/openjdk:17
     resource_class: small
     steps:
       - checkout:
