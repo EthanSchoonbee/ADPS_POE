@@ -20,6 +20,9 @@ jobs:
           name: Run tests with coverage
           command: npm run test --ci --runInBand --reporters=default --reporters=jest-junit --coverage
       - run:
+          name: Create coverage directory for SonarQube
+          command: mkdir -p ~/build/repo/coverage
+      - run:
           name: Move coverage results to SonarQube
           command: cp -R coverage/* ~/build/repo/coverage/
       - store_test_results:
