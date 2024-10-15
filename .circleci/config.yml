@@ -104,10 +104,10 @@ jobs:
           at: /home/circleci/build/repo
       - run:
           name: Check if lcov.info exists
-          command: ls -l ~/build/repo/coverage/lcov.info || echo "lcov.info not found"
+          command: ls -l /home/circleci/build/repo/coverage/lcov.info || echo "lcov.info not found"
       - run:
           name: Check Coverage Directory
-          command: ls ~/build/repo/coverage/
+          command: ls /home/circleci/build/repo/coverage/
       - run:
           name: Run Sonar Scanner
           command: |
