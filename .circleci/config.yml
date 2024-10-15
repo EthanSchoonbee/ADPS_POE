@@ -26,6 +26,9 @@ jobs:
           name: Move coverage results to SonarQube
           command: cp -R coverage/* ~/build/repo/coverage/
       - run:
+          name: Check Coverage Directory After Copy
+          command: ls -l ~/build/repo/coverage/
+      - run:
           name: List Coverage Directory
           command: ls ~/build/repo/coverage
       - store_test_results:
@@ -96,6 +99,9 @@ jobs:
       - run:
           name: Check if lcov.info exists
           command: ls -l ~/build/repo/coverage/lcov.info || echo "lcov.info not found"
+      - run:
+          name: Check Coverage Directory
+          command: ls ~/build/repo/coverage/
       - run:
           name: Run Sonar Scanner
           command: |
