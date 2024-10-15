@@ -124,7 +124,7 @@ jobs:
             -Dsonar.login="$SONAR_TOKEN" \
             -Dsonar.branch.name="${CIRCLE_BRANCH:-master}" \
             -Dsonar.sources="." \
-            -Dsonar.coverageReportPaths=~/build/repo/coverage/lcov.info
+            -Dsonar.coverageReportPaths=/home/circleci/build/repo/coverage/lcov.info
 
 workflows:
   build-and-test:
