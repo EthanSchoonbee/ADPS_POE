@@ -105,7 +105,7 @@ jobs:
             -Dsonar.exclusions="**/android/**,**/ios/**" \
             -Dsonar.login="$SONAR_TOKEN" \
             -Dsonar.branch.name="${CIRCLE_BRANCH:-master}" \
-            -Dsonar.sources="."
+            -Dsonar.sources="." \
             -Dsonar.coverageReportPaths=coverage/lcov.info
 
 workflows:
