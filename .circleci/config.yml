@@ -22,7 +22,7 @@ jobs:
           command: unzip sonar-scanner.zip
       - run:
           name: Move Sonar Scanner
-          command: mv sonar-scanner-5.01-linux sonar-scanner
+          command: mv sonar-scanner-cli-5.0.1.3006-linux sonar-scanner
       - run:
           name: Update Sonar Scanner Properties
           command: |
