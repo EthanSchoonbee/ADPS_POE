@@ -16,7 +16,7 @@ jobs:
             echo $JAVA_HOME
       - run:
           name: Download Sonar Scanner
-          command: curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1-linux.zip
+          command: curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
       - run:
           name: Unzip Sonar Scanner
           command: unzip sonar-scanner.zip
