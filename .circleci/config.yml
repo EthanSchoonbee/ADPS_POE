@@ -1,50 +1,19 @@
 version: 2.1
-orbs:
-  node: circleci/node@5
 
 jobs:
   sonarqube:
     working_directory: ~/build
     docker:
-      - image: cimg/node:18.17
+      - image: cimg/openjdk:17.0
     resource_class: small
     steps:
-      - run:
-          name: Check Current Java Version
-          command: |
-              java -version || echo "java not installed"
-      - run:
-          name: Remove Older Java Versions
-          command: |
-            sudo apt-get remove --purge openjdk-11-jdk || true
-            sudo apt-get autoremove || true
-      - run:
-          name: Install JDK 17
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y openjdk-17-jdk
-            # Set JDK 17 as the default
-            sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-17-openjdk-amd64/bin/java 1
-            sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
-      - run:
-          name: Set JAVA_HOME
-          command: |
-            echo 'export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64' >> $BASH_ENV
-            echo 'export PATH="$JAVA_HOME/bin:$PATH"' >> $BASH_ENV
+      - checkout:
+          path: ~/build/repo
       - run:
           name: Verify Java Installation
           command: |
-              source $BASH_ENV
-              java -version
-              echo $JAVA_HOME 
-      - run:
-          name: Cleanup build directory
-          command: rm -rf ~/build/repo || true
-      - run:
-          name: Create build directory
-          command: mkdir -p ~/build/repo
-      - checkout:
-          path: ~/build/repo
+            java -version
+            echo $JAVA_HOME
       - run:
           name: Download Sonar Scanner
           command: curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
@@ -64,12 +33,6 @@ jobs:
           command: find .
       - attach_workspace:
           at: ~/workspace
-      - run:
-          name: Verify Java Running Version
-          command: |
-              source $BASH_ENV
-              java -version
-              echo $JAVA_HOME
       - run:
           name: Run Sonar Scanner
           command: |
