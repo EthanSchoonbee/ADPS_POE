@@ -24,6 +24,10 @@ jobs:
           name: Move Sonar Scanner
           command: mv sonar-scanner-4.7.0.2747-linux sonar-scanner
       - run:
+          name: Update Sonar Scanner Properties
+          command: |
+            echo 'sonar.java.home=/usr/local/jdk-17.0.12' >> sonar-scanner/conf/sonar-scanner.properties
+      - run:
           name: Add sonar-scanner to PATH
           command: |
             echo 'export PATH="$PATH:$(pwd)/sonar-scanner/bin"' >> $BASH_ENV
@@ -42,8 +46,6 @@ jobs:
             export PATH="$JAVA_HOME/bin:$PATH"
             java -version
             sonar-scanner \
-            -Djavax.net.ssl.trustStorePassword=changeit \
-            -Djava.home="$JAVA_HOME" \
             -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
             -Dsonar.organization="$SONAR_ORG" \
             -Dsonar.host.url=https://sonarcloud.io \
