@@ -101,4 +101,8 @@ jobs:
 workflows:
   build-and-test:
     jobs:
+      - test-node
+      - build-node:
+          requires:
+            - test-node
       - sonarqube
