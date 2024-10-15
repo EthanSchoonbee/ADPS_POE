@@ -38,10 +38,12 @@ jobs:
           name: Run Sonar Scanner
           command: |
             source $BASH_ENV
-            export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+            export JAVA_HOME=/usr/local/jdk-17.0.12
             export PATH="$JAVA_HOME/bin:$PATH"
             java -version
             sonar-scanner \
+            -Djavax.net.ssl.trustStorePassword=changeit \
+            -Djava.home="$JAVA_HOME" \
             -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
             -Dsonar.organization="$SONAR_ORG" \
             -Dsonar.host.url=https://sonarcloud.io \
