@@ -1,0 +1,64 @@
+version: 2.1
+
+jobs:
+  sonarqube:
+    working_directory: ~/build
+    docker:
+      - image: cimg/openjdk:17.0
+    resource_class: small
+    steps:
+      - checkout:
+          path: ~/build/repo
+      - run:
+          name: Verify Java Installation
+          command: |
+            java -version
+            echo $JAVA_HOME
+      - run:
+          name: Download Sonar Scanner
+          command: curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+      - run:
+          name: Unzip Sonar Scanner
+          command: unzip sonar-scanner.zip
+      - run:
+          name: List Files
+          command: ls
+      - run:
+          name: Move Sonar Scanner
+          command: mv sonar-scanner-5.0.1.3006-linux sonar-scanner
+      - run:
+          name: Update Sonar Scanner Properties
+          command: |
+            echo 'sonar.java.home=/usr/local/jdk-17.0.12' >> ~/build/sonar-scanner/conf/sonar-scanner.properties
+      - run:
+          name: Add sonar-scanner to PATH
+          command: |
+            echo 'export PATH="$PATH:$(pwd)/sonar-scanner/bin"' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
+          name: Verify Java Version Before Scanner
+          command: |
+            source $BASH_ENV
+            java -version
+            echo $JAVA_HOME
+      - run:
+          name: Run Sonar Scanner
+          command: |
+            source $BASH_ENV
+            export JAVA_HOME=/usr/local/jdk-17.0.12
+            export PATH="$JAVA_HOME/bin:$PATH"
+            java -version
+            sonar-scanner -X \
+            -Dsonar.java.home="$JAVA_HOME" \
+            -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
+            -Dsonar.organization="$SONAR_ORG" \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.exclusions="**/android/**,**/ios/**" \
+            -Dsonar.login="$SONAR_TOKEN" \
+            -Dsonar.branch.name="${CIRCLE_BRANCH:-master}" \
+            -Dsonar.sources="."
+
+workflows:
+  build-and-test:
+    jobs:
+      - sonarqube
