@@ -4,8 +4,8 @@ jobs:
   sonarqube:
     working_directory: ~/build
     docker:
-      image: sonarsource/sonar-scanner-cli:latest
-      environment:
+      - image: sonarsource/sonar-scanner-cli:latest
+        environment:
           JAVA_HOME: /usr/local/jdk-17.0.12
     resource_class: small
     steps:
@@ -25,7 +25,7 @@ jobs:
           command: unzip sonar-scanner.zip
       - run:
           name: Move Sonar Scanner
-          command: mv sonar-scanner-4.7.0.2747-linux sonar-scanner
+          command: mv sonar-scanner-5.0.1-linux sonar-scanner
       - run:
           name: Update Sonar Scanner Properties
           command: |
@@ -49,14 +49,14 @@ jobs:
             export PATH="$JAVA_HOME/bin:$PATH"
             java -version
             sonar-scanner -X \
-            -Dsonar.java.home="$JAVA_HOME" \
-            -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
-            -Dsonar.organization="$SONAR_ORG" \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.exclusions="**/android/**,**/ios/**" \
-            -Dsonar.login="$SONAR_TOKEN" \
-            -Dsonar.branch.name="${CIRCLE_BRANCH:-master}" \
-            -Dsonar.sources="."
+              -Dsonar.java.home="$JAVA_HOME" \
+              -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
+              -Dsonar.organization="$SONAR_ORG" \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.exclusions="**/android/**,**/ios/**" \
+              -Dsonar.login="$SONAR_TOKEN" \
+              -Dsonar.branch.name="${CIRCLE_BRANCH:-master}" \
+              -Dsonar.sources="."
 
 workflows:
   build-and-test:
