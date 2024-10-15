@@ -94,6 +94,9 @@ jobs:
             java -version
             echo $JAVA_HOME
       - run:
+          name: Check if lcov.info exists
+          command: ls -l ~/build/repo/coverage/lcov.info
+      - run:
           name: Run Sonar Scanner
           command: |
             source $BASH_ENV
@@ -109,7 +112,7 @@ jobs:
             -Dsonar.login="$SONAR_TOKEN" \
             -Dsonar.branch.name="${CIRCLE_BRANCH:-master}" \
             -Dsonar.sources="." \
-            -Dsonar.coverageReportPaths=build/repo/coverage/lcov.info
+            -Dsonar.coverageReportPaths=/home/circleci/build/build/repo/coverage/lcov.info
 
 workflows:
   build-and-test:
