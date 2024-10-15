@@ -4,7 +4,7 @@ jobs:
   sonarqube:
     working_directory: ~/build
     docker:
-      - image: sonarsource/sonar-scanner-cli:latest
+      - image: cimg/openjdk:17.0
         environment:
           JAVA_HOME: /usr/local/jdk-17.0.12
     resource_class: small
