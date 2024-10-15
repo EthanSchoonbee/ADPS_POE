@@ -18,13 +18,16 @@ jobs:
           command: npm install jest-junit
       - run:
           name: Run tests with coverage
-          command: npm run test --ci --runInBand --reporters=default --reporters=jest-junit --coverage
+          command: npm run test --ci --runInBand --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov
       - run:
           name: Create coverage directory for SonarQube
           command: mkdir -p ~/build/repo/coverage
       - run:
           name: Move coverage results to SonarQube
           command: cp -R coverage/* ~/build/repo/coverage/
+      - run:
+          name: List Coverage Directory
+          command: ls ~/build/repo/coverage
       - store_test_results:
           path: ./test-results/
 
@@ -106,7 +109,7 @@ jobs:
             -Dsonar.login="$SONAR_TOKEN" \
             -Dsonar.branch.name="${CIRCLE_BRANCH:-master}" \
             -Dsonar.sources="." \
-            -Dsonar.coverageReportPaths=coverage/lcov.info
+            -Dsonar.coverageReportPaths=build/repo/coverage/lcov.info
 
 workflows:
   build-and-test:
