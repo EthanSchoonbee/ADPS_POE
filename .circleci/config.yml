@@ -95,7 +95,7 @@ jobs:
             echo $JAVA_HOME
       - run:
           name: Check if lcov.info exists
-          command: ls -l ~/build/repo/coverage/lcov.info
+          command: ls -l ~/build/repo/coverage/lcov.info || echo "lcov.info not found"
       - run:
           name: Run Sonar Scanner
           command: |
@@ -112,7 +112,7 @@ jobs:
             -Dsonar.login="$SONAR_TOKEN" \
             -Dsonar.branch.name="${CIRCLE_BRANCH:-master}" \
             -Dsonar.sources="." \
-            -Dsonar.coverageReportPaths=/home/circleci/build/build/repo/coverage/lcov.info
+            -Dsonar.coverageReportPaths=~/build/repo/coverage/lcov.info
 
 workflows:
   build-and-test:
@@ -121,4 +121,7 @@ workflows:
       - build-node:
           requires:
             - test-node
-      - sonarqube
+      - sonarqube:
+          requires:
+            - test-node
+            - build-node
